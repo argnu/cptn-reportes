@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="certificado_matricula" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="solicitud_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select textcat(textcat(p.nombre,' '), p.apellido) as nombre_profesional, s.numero, d.nombre as nombre_delegacion, s.fecha,
+		date_part('day', fecha) as dia, to_char(fecha, 'TMMonth') as mes, date_part('year', fecha) as anio 
+from public.profesional p
+INNER JOIN public.solicitud s on (p.id=s.entidad)
+INNER JOIN public.delegacion d on (s.delegacion=d.id)
+WHERE s.id = cast( $P{solicitud_id} as INTEGER)]]>
+	</queryString>
+	<field name="nombre_profesional" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre_profesional"/>
+	</field>
+	<field name="numero" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="numero"/>
+	</field>
+	<field name="nombre_delegacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre_delegacion"/>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	</field>
+	<field name="dia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="dia"/>
+	</field>
+	<field name="mes" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="mes"/>
+	</field>
+	<field name="anio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="anio"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="2" width="497" height="60" uuid="2efacdb2-4084-4c02-9925-af4a025e87e6"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="4" width="316" height="16" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[CERTIFICADO DE MATRÍCULA EN TRÁMITE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="127" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="5" width="494" height="15" uuid="014e3b0a-48b6-42d4-b5aa-1cbd11967c08"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[El COLEGIO PROFESIONAL DE TÉCNICOS DE NEUQUÉN, a solicitud del interesado, hace Constar: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="22" width="266" height="18" uuid="8f2916ff-a243-4309-8ded-9d391cbb0f29">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87440537-0e6c-4518-b4aa-20fd751bef88"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Que el Sr/a: " + $F{nombre_profesional}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="52" width="495" height="31" uuid="2af85935-6512-4a40-9293-b1110b22cddb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2dc2f78d-9c66-48c4-8fc3-802707821672"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Estandar-Regular" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En el día de la fecha ha iniciado la solicitud N° " +  $F{numero} + " para obtener su matrícula profesional"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="83" width="493" height="28" uuid="bb2273c1-c5a8-4d51-a6e2-9601623ffbf1"/>
+				<textElement>
+					<font fontName="SansSerif" size="11"/>
+				</textElement>
+				<text><![CDATA[La presente constancia no significa la aprobación de dicha solicitud por parte de la Mesa Ejecutiva, ni habilita el ejercicio de su profesión hasta tanto no se concluya el trámite.]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="53" splitType="Stretch">
+			<textField>
+				<reportElement x="171" y="1" width="325" height="13" uuid="e257b94b-3c82-47fb-9296-f83b2e9646ef"/>
+				<textElement textAlignment="Right">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_delegacion} + ", a los " + $F{dia} + " días del mes de " + $F{mes} + " del año "+ $F{anio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="49" splitType="Stretch">
+			<staticText>
+				<reportElement x="39" y="15" width="158" height="21" uuid="4893921d-1cfa-4090-a100-4b816e228cd9"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Confeccionó ( Firma y Sello ):]]></text>
+			</staticText>
+			<line>
+				<reportElement x="204" y="23" width="290" height="1" uuid="eb42e03b-c244-4304-be97-35f98ff1d3f4"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitud_matricula_profesional" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="30" bottomMargin="30" uuid="98838285-f343-415e-975c-bae5bf8c7764">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<subDataset name="contacto" uuid="b38cefd5-7a58-4dd6-9ad2-fe3b8d342d9c">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
+		<parameter name="id_Entidad" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT tc.valor as tipoContacto, c.valor as contactoValor
+FROM  public.contacto c 
+ INNER JOIN public.t_contacto tc ON (tc.id=c.tipo)
+   WHERE c.entidad= cast( $P{id_Entidad} as INTEGER)]]>
+		</queryString>
+		<field name="tipocontacto" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="tipocontacto"/>
+		</field>
+		<field name="contactovalor" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="contactovalor"/>
+		</field>
+	</subDataset>
+	<subDataset name="domicilio" uuid="f07cfd6b-f82b-487a-982a-d9b43f41812d">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<parameter name="id_entidad" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT ed.entidad, textcat('Domicilio ',ed.tipo)  as tipoDomicilio, l.nombre as localidad, dpto.nombre as departamento, d.direccion
+FROM  
+        public.entidad_domicilio ed 
+                 INNER JOIN public.domicilio d ON (d.id = ed.domicilio)
+                 INNER JOIN public.localidad l ON (d.localidad= l.id)
+                 INNER JOIN public.departamento dpto ON (dpto.id= l.departamento)
+                 WHERE ed.entidad = cast( $P{id_entidad} as INTEGER)]]>
+		</queryString>
+		<field name="entidad" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.label" value="entidad"/>
+		</field>
+		<field name="tipodomicilio" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="tipodomicilio"/>
+		</field>
+		<field name="localidad" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="localidad"/>
+		</field>
+		<field name="departamento" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="departamento"/>
+		</field>
+		<field name="direccion" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="direccion"/>
+		</field>
+	</subDataset>
+	<subDataset name="formacion" uuid="ecc09327-6951-4361-9ed5-204c9985d866">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<parameter name="id_entidad" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[select it.nombre as nombre_titulo, i.nombre as institucion, to_char(pt."fechaEgreso",'DD/MM/YYYY') as fecha_egreso,
+nt.valor as nivel, CASE  WHEN (pt."fechaEmision" IS NULL) THEN ''
+           ELSE to_char(pt."fechaEmision", 'DD/MM/YYYY')
+  END as fecha_emision
+from institucion_titulo it 
+inner join institucion i on (it.institucion=i.id)
+inner join profesional_titulo pt on (pt.titulo=it.id)
+inner join t_nivel_titulo nt on (nt.id = it.nivel)
+where pt.profesional=$P{id_entidad}]]>
+		</queryString>
+		<field name="nombre_titulo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="nombre_titulo"/>
+		</field>
+		<field name="institucion" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="institucion"/>
+		</field>
+		<field name="fecha_egreso" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="fecha_egreso"/>
+		</field>
+		<field name="nivel" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="nivel"/>
+		</field>
+		<field name="fecha_emision" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="fecha_emision"/>
+		</field>
+	</subDataset>
+	<subDataset name="caja_previsional" uuid="03d1d4da-8089-40e1-a905-f5c1dc299bf9">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<parameter name="id_entidad" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[select nombre as nombre_caja
+from profesional_caja_previsional pc inner join caja_previsional cp
+on (pc.caja=cp.id)
+ where profesional=$P{id_entidad}]]>
+		</queryString>
+		<field name="nombre_caja" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="nombre_caja"/>
+		</field>
+	</subDataset>
+	<subDataset name="subsidiarios" uuid="252915b2-ad9d-44e3-8f86-c84279c002cf">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<parameter name="id_entidad" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[select *
+from subsidiario
+where profesional =$P{id_entidad}]]>
+		</queryString>
+		<field name="dni" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="dni"/>
+		</field>
+		<field name="apellido" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="apellido"/>
+		</field>
+		<field name="nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		</field>
+		<field name="porcentaje" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.label" value="porcentaje"/>
+		</field>
+	</subDataset>
+	<parameter name="solicitud_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[234]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select s.entidad as id_entidad, s.fecha as fecha_solicitud, s.numero as num_solicitud, p.nombre, p.apellido, p."fechaNacimiento", p.dni, ec.valor as estado_civil, COALESCE(p.nacionalidad, '') as nacionalidad, p."lugarNacimiento",
+		         sexo.valor as sexo, COALESCE(e.cuit, '') as cuil
+                 FROM public.solicitud s INNER JOIN public.entidad e ON (s.entidad=e.id)
+                 INNER JOIN public.profesional p ON (e.id=p.id) 
+                 INNER JOIN public.t_estadoCivil ec ON (p."estadoCivil"=ec.id)
+                 INNER JOIN public.t_sexo sexo ON (sexo.id=p.sexo)                
+                 where s.id= cast( $P{solicitud_id} as INTEGER)]]>
+	</queryString>
+	<field name="id_entidad" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_entidad"/>
+	</field>
+	<field name="fecha_solicitud" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha_solicitud"/>
+	</field>
+	<field name="num_solicitud" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="num_solicitud"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+	</field>
+	<field name="apellido" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="apellido"/>
+	</field>
+	<field name="fechaNacimiento" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fechaNacimiento"/>
+	</field>
+	<field name="dni" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="dni"/>
+	</field>
+	<field name="estado_civil" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="estado_civil"/>
+	</field>
+	<field name="nacionalidad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nacionalidad"/>
+	</field>
+	<field name="lugarNacimiento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="lugarNacimiento"/>
+	</field>
+	<field name="sexo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="sexo"/>
+	</field>
+	<field name="cuil" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cuil"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" x="1" y="1" width="497" height="60" uuid="8d34ebbd-e3c0-4331-b859-3b12bb80e667"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="1" y="1" width="200" height="18" uuid="d6a937c5-96e5-4fca-b1da-2f30a7107dc5">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Solicitud de Alta de Matrícula N°]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="222" y="2" width="90" height="18" uuid="1d3f3b4a-d52d-4c05-bcb6-2201c685ca81">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2237a7d-9c04-4ab6-9ea5-ab75b8a87da3"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{num_solicitud}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="22" width="497" height="1" uuid="6a9c6ca1-9b49-4995-ad3b-7478ede0a2a9">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="329" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement x="77" y="2" width="100" height="18" uuid="0a6f6687-92c4-4071-94ee-0563d35cdc3d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a3dd92a8-ee25-49ec-b168-de59b2adf8fb"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dni}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="20" width="55" height="18" uuid="0d195bca-3e53-4986-8dc7-081614d0e3d8"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Apellido]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="68" y="20" width="143" height="18" uuid="3948dfea-8106-4d54-b707-77849a3a0932">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="37fe2b73-0dca-4579-aaac-f2f707b5947f"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apellido}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="283" y="20" width="214" height="18" uuid="a99fba8c-4e6d-4550-a760-ee701fb4dafe">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c2237a7d-9c04-4ab6-9ea5-ab75b8a87da3"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="38" width="132" height="19" uuid="c628c146-d862-4620-9070-c5b1e47c7f35"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Fecha de Nacimiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="38" width="40" height="20" uuid="019cb248-b2e4-48e0-a336-e9dcf916d277"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Sexo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="277" y="39" width="60" height="20" uuid="34cbc15c-23c3-4628-bdb3-470a2275e6a5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="13384d4b-ac9c-46de-92bd-ee12c014224f"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sexo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="75" width="63" height="17" uuid="2d40080b-f914-4ba8-93cf-5dd4205319af"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Estado Civil]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="76" y="75" width="90" height="17" uuid="9e3a9f3f-6265-4cff-b57c-363512b94130">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="174fde77-db2d-4f1a-ad75-4fbf51d9cf51"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estado_civil}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="57" width="78" height="18" uuid="2ad25ace-ddd7-4c56-8113-f27c2b8ac6cf"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Nacionalidad]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="133" y="38" width="87" height="19" uuid="278ffcba-1eed-4714-9686-a2d3940afd56">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27637341-f500-44ed-b5d7-fc01d503b55f"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaNacimiento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="20" width="50" height="18" uuid="13c8ff11-a8b4-427b-9eeb-c173585219de"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="2" width="76" height="18" uuid="2dd20ea6-11b8-4ad1-b578-6516cf314a28"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Documento ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="231" y="58" width="113" height="19" uuid="e82a6b9a-b502-4af8-8e69-ca16337867cb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Lugar de Nacimiento]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="81" y="58" width="100" height="16" uuid="aff1685b-316f-4495-bdba-c67495e1325c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9440578b-be02-4e98-a088-8888a6897d1c"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nacionalidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="345" y="59" width="152" height="18" uuid="8fc18ba5-9172-45ff-8df0-02d9e846d57d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a21608b5-7e63-4f69-8110-b6a42e8986f0"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lugarNacimiento}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="95" width="497" height="1" uuid="6aaad114-7a05-4077-ab02-9b87360f0d5b"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="99" width="118" height="14" uuid="4d2eee81-abd4-49f1-84b3-8810295b65b2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="klavica" size="11"/>
+				</textElement>
+				<text><![CDATA[Información de Contacto]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="0" y="118" width="497" height="16" uuid="227b8b20-1c5d-46e7-9c03-123f96b0ec5e">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="contacto" uuid="0a8ae396-8d61-4750-87fc-16ca266b0760">
+						<datasetParameter name="id_Entidad">
+							<datasetParameterExpression><![CDATA[$F{id_entidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="16" width="497">
+						<textField>
+							<reportElement x="3" y="0" width="100" height="14" uuid="31fedff4-fdd2-4c42-bc09-c1ec19815189">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement>
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{tipocontacto}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="110" y="0" width="290" height="14" uuid="76098e57-2140-4438-87dd-8976c05ca04e">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement>
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{contactovalor}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement positionType="Float" x="0" y="141" width="497" height="16" uuid="e2c4aed4-aaf0-4d4c-a007-c5f9bc8688d7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="domicilio" uuid="7d2b826c-7b1b-4a2a-9303-6dea4c54ae4d">
+						<datasetParameter name="id_entidad">
+							<datasetParameterExpression><![CDATA[$F{id_entidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="16" width="497">
+						<textField>
+							<reportElement x="3" y="2" width="86" height="14" uuid="0caf5fc0-5b96-4f70-a86e-f3ae5268f990">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement>
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{tipodomicilio}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="215" y="2" width="144" height="14" uuid="2cba086e-827e-4788-be01-a8b7c31b1758">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement>
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{localidad}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="368" y="2" width="127" height="14" uuid="8df26ced-2908-463a-b784-9a16c8ab292b">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement>
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{departamento}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="92" y="2" width="120" height="14" uuid="da631f49-501e-4a56-aed0-107cf3ff44d0">
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</reportElement>
+							<textElement>
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<line>
+				<reportElement positionType="Float" x="0" y="137" width="497" height="1" uuid="60537f30-b07c-4e46-9654-cf48641386ff"/>
+			</line>
+			<line>
+				<reportElement positionType="Float" x="0" y="162" width="497" height="1" uuid="aa620c4e-905f-4e2f-8c98-90ab372a02f4"/>
+			</line>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="166" width="118" height="14" uuid="2bc1be7f-54b5-4345-82fa-0bc568e99230"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="klavica" size="11"/>
+				</textElement>
+				<text><![CDATA[Formación]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement positionType="Float" x="0" y="185" width="495" height="37" uuid="239af6d6-1d2d-458d-9311-4c32e9859cf6"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="formacion" uuid="a032a084-313f-4f4f-8213-71d4a105c963">
+						<datasetParameter name="id_entidad">
+							<datasetParameterExpression><![CDATA[$F{id_entidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="37" width="495">
+						<textField>
+							<reportElement x="51" y="0" width="195" height="17" uuid="ca853324-fe07-4ac9-98be-de88d629643e"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nombre_titulo}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="321" y="0" width="174" height="17" uuid="bb762d63-6561-4e16-ae81-6e879633b12d"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{institucion}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="425" y="19" width="70" height="18" uuid="8489b087-69f8-42a2-b3a2-93c31a0a0bea"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{fecha_egreso}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="260" y="19" width="58" height="17" uuid="23448a3c-acd4-4cb8-bc15-e688902c15da"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{fecha_emision}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="52" y="19" width="105" height="17" uuid="53caea7c-ab38-4f94-aced-9feeac3b48a2"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nivel}]]></textFieldExpression>
+						</textField>
+						<staticText>
+							<reportElement x="251" y="0" width="70" height="17" uuid="f7d3740e-a16d-4cbe-9546-5798970afa23"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Estandar-Regular" size="12"/>
+							</textElement>
+							<text><![CDATA[Institución: ]]></text>
+						</staticText>
+						<staticText>
+							<reportElement x="2" y="19" width="46" height="17" uuid="4b371ee9-0b92-4d6f-b5a9-333ff6d71d8a"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Estandar-Regular" size="12"/>
+							</textElement>
+							<text><![CDATA[Nivel : ]]></text>
+						</staticText>
+						<staticText>
+							<reportElement x="162" y="19" width="95" height="17" uuid="b46df695-3f8b-44ee-be1c-4ebee60f4dd0"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Estandar-Regular" size="12"/>
+							</textElement>
+							<text><![CDATA[Fecha Emisión: ]]></text>
+						</staticText>
+						<staticText>
+							<reportElement x="318" y="19" width="107" height="17" uuid="d093a7ac-ffbb-4e1c-88bd-37d2aa386e87"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Estandar-Regular" size="12"/>
+							</textElement>
+							<text><![CDATA[Fecha de Egreso: ]]></text>
+						</staticText>
+						<staticText>
+							<reportElement x="1" y="0" width="46" height="17" uuid="f54ccea2-e056-4446-9ccb-704f830ad6b7"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Estandar-Regular" size="12"/>
+							</textElement>
+							<text><![CDATA[Título:]]></text>
+						</staticText>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="230" width="118" height="14" uuid="35c74852-bd86-4d58-bba0-cfe76c1a5f41"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="klavica" size="11"/>
+				</textElement>
+				<text><![CDATA[Caja Previsional]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="Float" x="3" y="226" width="497" height="1" uuid="2b571551-62ae-4c7b-ade3-ec7733aa4715"/>
+			</line>
+			<componentElement>
+				<reportElement positionType="Float" x="0" y="246" width="497" height="30" uuid="245cd336-2a20-491d-a3cd-073729a0052e"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="caja_previsional" uuid="c5f82a89-df54-4fb8-9add-edc0e24b4f0c">
+						<datasetParameter name="id_entidad">
+							<datasetParameterExpression><![CDATA[$F{id_entidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="497">
+						<textField>
+							<reportElement x="0" y="10" width="497" height="20" uuid="f3a62a86-fcd1-49af-8a33-bca0f8f231a3"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="extandart"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nombre_caja}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="286" width="160" height="14" uuid="2fcba7db-2496-4d17-a013-b44e144e90c7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="klavica" size="11"/>
+				</textElement>
+				<text><![CDATA[Beneficiarios del subsidio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="77" width="45" height="17" uuid="fb6b89ad-a08a-46bc-a966-571dd347734f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[CUIL]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="Float" x="1" y="280" width="497" height="1" uuid="168cb66e-dc55-4b64-a04f-4f3c1ff5248d"/>
+			</line>
+			<textField>
+				<reportElement x="279" y="80" width="184" height="12" uuid="ffa4496e-8a17-4cd1-b5a1-1cb20761292b"/>
+				<textFieldExpression><![CDATA[$F{cuil}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement positionType="Float" x="0" y="304" width="497" height="21" uuid="9027de08-21a3-404f-a9e7-d4cd0cffabfe">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="subsidiarios" uuid="33e54fb5-3d1e-4268-bb17-b5cbecd74adc">
+						<datasetParameter name="id_entidad">
+							<datasetParameterExpression><![CDATA[$F{id_entidad}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="21" width="497">
+						<textField>
+							<reportElement x="0" y="0" width="80" height="21" uuid="bdde2a4c-5438-4a90-a78f-99871e1fff0b"/>
+							<textFieldExpression><![CDATA[$F{dni}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="101" y="0" width="119" height="21" uuid="41e412a7-725c-4fed-95be-6b0b22198254"/>
+							<textFieldExpression><![CDATA[$F{apellido}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="231" y="0" width="156" height="21" uuid="8231411e-8053-4bf5-902e-77af9bc9a526"/>
+							<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="404" y="0" width="75" height="21" uuid="db62358f-f804-472e-a447-c9e3633bf4e1"/>
+							<textFieldExpression><![CDATA[$F{porcentaje}+"%"]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="70">
+			<staticText>
+				<reportElement positionType="Float" x="1" y="6" width="105" height="14" uuid="203c2324-c365-4704-814d-e7ecd939fb2f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="klavica" size="11"/>
+				</textElement>
+				<text><![CDATA[Declaración Jurada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="22" width="497" height="38" uuid="43df7875-5ed0-4ba9-941b-79c0520d8015"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="extandart" size="9"/>
+				</textElement>
+				<text><![CDATA[Declaro bajo juramento que no he desarrollado actividades dentro del territorio de la Provincia de Neuquén,previo a la fecha de inscripción. Se efectúa la presente Declaración Jurada a los fines de no abonar las multas y recargos impuestos por el Colegio Profesional de Técnicos de Neuquén.]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<lastPageFooter>
+		<band height="127">
+			<staticText>
+				<reportElement x="0" y="0" width="497" height="40" uuid="98f399f7-17f9-4dff-bd4d-478945871e25"/>
+				<textElement>
+					<font fontName="extandart"/>
+				</textElement>
+				<text><![CDATA[A ser completados únicamente por el personal del Colegio Profesional
+Número de Acta:                            Fecha de Acta: 
+Fecha:                                            Matricula:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="99" width="176" height="1" uuid="3219ec46-51f1-4c16-a3f7-d7be818ac546"/>
+			</line>
+			<line>
+				<reportElement x="201" y="99" width="127" height="1" uuid="8e1790cc-282c-4371-bcb6-65ab7305cb8c"/>
+			</line>
+			<line>
+				<reportElement x="367" y="99" width="127" height="1" uuid="a23ef5a3-0783-4193-849e-9a256b2a0d8d"/>
+			</line>
+			<staticText>
+				<reportElement x="7" y="100" width="172" height="13" uuid="218b8e0b-7fe0-470f-a75f-24c9fabadea7"/>
+				<textElement>
+					<font fontName="extandart"/>
+				</textElement>
+				<text><![CDATA[Firma y aclaración del solicitante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="209" y="101" width="114" height="13" uuid="4d5e21fb-2678-4c6c-9b41-d3a7f9acdcb5"/>
+				<text><![CDATA[Verificó originales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="102" width="122" height="13" uuid="c9f7471a-946a-46d2-a595-7232fb0b6c3b"/>
+				<textElement textAlignment="Left">
+					<font fontName="extandart"/>
+				</textElement>
+				<text><![CDATA[Firma del autorizante]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

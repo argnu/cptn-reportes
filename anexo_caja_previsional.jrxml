@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="anexo_caja_previsional" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="solicitud_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select fecha
+from public.solicitud s
+WHERE s.id = cast( $P{solicitud_id} as INTEGER)]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="0" width="497" height="62" uuid="2efacdb2-4084-4c02-9925-af4a025e87e6"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="117" y="2" width="316" height="36" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
+				<textElement textAlignment="Center">
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[ANEXO DE OPCIÓN DE CAJA PREVISIONAL 
+(Capítulo X  - Ley 2988).]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="564" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="1" width="496" height="221" uuid="132b4c8b-0129-454e-9568-67d56a5bf3ae"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="2" y="1" width="484" height="220" uuid="bb2273c1-c5a8-4d51-a6e2-9601623ffbf1"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="11"/>
+				</textElement>
+				<text><![CDATA[CAPÍTULO X
+JUBILACIÓN EN LA CAJA PREVISIONAL DE PROFESIONALES DE LA PROVINCIA DEL NEUQUÉN
+Artículo 56: Una vez sancionada la presente Ley, el Colegio debe adherir a la Caja Previsional de Profesionales de la Provincia”.
+Artículo 57: Todo aquel matriculado que se haya jubilado en los términos de la legislación nacional o provincial, puede acceder a una matrícula especial que se denomina Matriculado Técnico Jubilado. Para acceder a dicha matrícula, es condición no ejercer la actividad profesional en ninguna de sus categorías. En ese caso especial, tampoco deben pagar su aporte a la Caja Previsional de Profesionales de la Provincia del Neuquén, siempre y cuando el Colegio envíe una notificación fehaciente a dicha Caja, que se cumple lo indicado en esta Ley. Si el profesional, por algún motivo, reanuda la actividad, automáticamente debe ser dado de baja de la matrícula de jubilado, retornar a la matrícula de activos y volver a pagar el aporte a la citada Caja Previsional.
+Artículo 58: Los matriculados actualmente adheridos al Colegio de Profesionales de Agrimensura, Geología e Ingeniería de la Provincia del Neuquén (CPAGIN) Decreto Ley 708, pueden optar por mantener su pertenencia a la Caja Previsional de Profesionales de la Provincia del Neuquén o realizar el cambio a otra Caja.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="240" width="495" height="310" uuid="ee1eaddf-0ede-4a5d-b255-fcd0e4b01e6b"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[1.  Es obligación del Colegio Profesional de Técnicos adherir al Régimen jubilatorio de la Caja Previsional para Profesionales de conformidad con el art. 56 de la Ley 2988, y lo hace como persona pública no estatal.
+2. Los matriculados NO están obligados a adherir a la Caja Previsional para Profesionales. Los matriculados del antiguo CPAGIN Residual tienen la opción de mantenerse en el Régimen de la Caja Previsional para Profesionales del Neuquén o elegir otra caja jubilatoria.
+3.-  Los matriculados NO están obligados a adherir a la Caja Previsional para Profesionales. Los nuevos matriculados al Colegio de Técnicos, tienen el mismo derecho a opción.  Es decir,  que voluntariamente pueden adherir al Régimen de la Caja Previsional para Profesionales o elegir otra Caja Previsional.
+4.-Obligación de aportar. Los matriculados tienen la obligación de realizar aportes jubilatorios a elección .
+5.- La titularidad del derecho y la obligación de realizar aportes es del colegiado, por este motivo ante la posibilidad de que un matriculado del Colegio de Técnicos no pueda ejercer el derecho de opción previsto en el artículo 58 de la ley 2988 –porque se le niegue la solicitud de desafiliación de la Caja Previsional o se le exija la afiliación compulsiva- sería este matriculado quien iniciaría las acciones judiciales pertinentes con sustento en el artículo 58 de la ley 2988.
+6.-La voluntariedad de los matriculados tiene que ver con la posibilidad de elegir en que régimen jubilatorio aportan, estando obligados a realizar aportes jubilatorios a algún sistema previsional para garantizar su seguridad social.
+En conclusión; el régimen de sistema previsional debe ser optativo en el sentido de que los integrantes del colegio técnico deben aportar pero no están obligados a hacerlo en el sistema previsto por las leyes 2045 y 2223 (Caja Previsional para Profesionales de la Provincia del Neuquén).
+Declaro bajo juramento haber leído y comprendido los Art° 56, 57 y 58 de la Ley Provincial N°2988 y  cada uno de los puntos transcriptos precedentemente.]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="29" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="19" y="5" width="107" height="21" uuid="4893921d-1cfa-4090-a100-4b816e228cd9"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Firma y Aclaración:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="131" y="13" width="290" height="1" uuid="eb42e03b-c244-4304-be97-35f98ff1d3f4"/>
+			</line>
+			<staticText>
+				<reportElement x="20" y="29" width="77" height="21" uuid="703b65ef-c2a1-4ad3-8483-c895bcd5eeac"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Lugar y Fecha:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="132" y="37" width="290" height="1" uuid="1c49e7f3-b279-412a-ac5f-9d2a8983b0b4"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="certificado_matricula" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="solicitud_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select p.apellido, p.nombre, case when p."publicarEmail" then 'Si' else 'No' end as correo,
+case when p."publicarCelular" then 'Si' else 'No' end as celular,
+case when p."publicarDireccion" then 'Si' else 'No' end as direccion,
+case when p."publicarAcervo" then 'Si' else 'No' end as acervo
+from public.profesional p
+INNER JOIN public.solicitud s on (p.id=s.entidad)
+WHERE s.id = cast( $P{solicitud_id} as INTEGER)]]>
+	</queryString>
+	<field name="apellido" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="apellido"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+	</field>
+	<field name="correo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="correo"/>
+	</field>
+	<field name="celular" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="celular"/>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="direccion"/>
+	</field>
+	<field name="acervo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="acervo"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="2" width="497" height="60" uuid="2efacdb2-4084-4c02-9925-af4a025e87e6"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="4" width="316" height="16" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[DDJJ ACEPTACIÓN DE DIFUSIÓN DE DATOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="378" y="4" width="121" height="18" uuid="c45ee8fa-8b82-4862-b788-9bee7cc21137"/>
+				<textFieldExpression><![CDATA["Doc .M-0004-A-Rev.0"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="379" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="5" width="494" height="47" uuid="014e3b0a-48b6-42d4-b5aa-1cbd11967c08"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Por medio del presente formulario de Declaración Jurada Autorizo al Colegio
+Profesional de Técnicos del Neuquén – Ley 2988- a informar y difundir los siguientes
+Datos de Contacto Profesional declarados en solicitud de matricula;]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="3" y="62" width="187" height="58" uuid="5401676d-866a-4fe6-9915-c17ed3309d30">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="87440537-0e6c-4518-b4aa-20fd751bef88"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Correo Electrónico:  " + $F{correo} +  "\n" +
+"Número Celular:  " + $F{celular}   +  "\n" +
+"Domicilio Legal:  " + $F{direccion}   +  "\n" +
+"Acervo:  " + $F{acervo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="241" y="150" width="255" height="1" uuid="86363ac6-69da-4e6b-93b1-71fb2cc9134d"/>
+			</line>
+			<staticText>
+				<reportElement x="132" y="139" width="105" height="21" uuid="6cc4dbc4-0c77-4703-a7f9-2e026fa59294"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Firma de aceptación ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="170" width="496" height="1" uuid="eff44c4a-ba08-49a2-ae60-da59f6a1c3d1"/>
+			</line>
+			<staticText>
+				<reportElement x="2" y="181" width="128" height="16" uuid="0afdf680-ee14-4190-8cb9-b10cffdd5924"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[Registro de Firmas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="203" width="496" height="35" uuid="8df1515f-2464-43f0-b3e0-3608928f4c2c"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[             A los efectos de llevar un registro digital de las firmas de Profesionales,solicitamos plasmar su firma en el recuadro previsto a tal efecto.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="1" y="245" width="483" height="125" uuid="0126f907-dfc0-4978-b9be-e279fff0e02b"/>
+			</rectangle>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="335" y="14" width="54" height="15" uuid="78d99956-25eb-4e00-9b49-b890ea95046a"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Matricula:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="393" y="21" width="100" height="1" uuid="935e91ad-53d5-4094-b93f-87bf777d38c7"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="30" width="369" height="15" uuid="4abc59ca-557c-45d2-8421-e6bc7e46ce3d"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="9"/>
+				</textElement>
+				<text><![CDATA[** Firmar sin exceder los límites del recuadro.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="13" width="329" height="17" uuid="8311133c-8492-4d03-ba0d-8bb51529cc03"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Apellido y Nombre: "+ $F{apellido} + " " + $F{nombre} ]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="22" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>
