@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="certificado_matricula" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="certificado_baja_para_caja" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -14,6 +14,7 @@
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
 	<subDataset name="ds_movimientos_matricula" uuid="8a42a95e-961e-49b2-9574-9f413f930b1d">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -69,17 +70,80 @@ order by pt.id]]>
 			<property name="com.jaspersoft.studio.field.label" value="nombre"/>
 		</field>
 	</subDataset>
+	<subDataset name="ds_legajos" uuid="3d2ad8b6-8741-4716-ad48-2bdfbced0de8">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="141"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="848"/>
+		<parameter name="matricula_id" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[select numero_legajo as numero, to_char(fecha_solicitud, 'DD/MM/YYYY') as fecha, est.valor as estado,
+coalesce (d.direccion, '') || ' Nomenclatura ' || l.nomenclatura ||  coalesce( '-' || loc.nombre  || '-' , '')|| coalesce(dpto.nombre || '-' , '')  || coalesce(p.nombre, '') as ubicacion,
+tc.descripcion || ' ' || ts.descripcion  as tarea,
+case when (l.tipo = 3) then 'Legajo Tec'
+else (case when (l.tipo = 2) then 'Orden de Trabajo' else 'Permiso de Const' end) end as tipo
+from legajo l
+inner join t_estadolegajo est on (est.id=l.estado)
+left join domicilio d on (l.domicilio=d.id)
+left join localidad loc on (loc.id=d.localidad)
+left join departamento dpto on (dpto.id = loc.departamento)
+left join provincia p on (p.id= dpto.provincia)
+inner join tarea_subcategoria ts on (ts.id = l.subcategoria)
+inner join tarea_categoria tc on (tc.id=ts.categoria)
+left join legajo_comitente lc on (lc.legajo=l.id)
+left join persona com on (lc.persona= com.id)
+where matricula= $P{matricula_id}]]>
+		</queryString>
+		<field name="numero" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.label" value="numero"/>
+		</field>
+		<field name="fecha" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		</field>
+		<field name="estado" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		</field>
+		<field name="ubicacion" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="ubicacion"/>
+		</field>
+		<field name="tarea" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="tarea"/>
+		</field>
+		<field name="tipo" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+		</field>
+		<group name="numero">
+			<groupExpression><![CDATA[$F{numero}]]></groupExpression>
+		</group>
+		<group name="fecha">
+			<groupExpression><![CDATA[$F{fecha}]]></groupExpression>
+		</group>
+		<group name="estado">
+			<groupExpression><![CDATA[$F{estado}]]></groupExpression>
+		</group>
+		<group name="ubicacion">
+			<groupExpression><![CDATA[$F{ubicacion}]]></groupExpression>
+		</group>
+		<group name="tarea">
+			<groupExpression><![CDATA[$F{tarea}]]></groupExpression>
+		</group>
+		<group name="tipo">
+			<groupExpression><![CDATA[$F{tipo}]]></groupExpression>
+		</group>
+	</subDataset>
 	<parameter name="solicitud_id" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT s.entidad as id_entidad, to_char(s.fecha, 'DD/MM/YYYY') as fecha_solicitud, s.numero as num_solicitud, p.nombre, p.apellido, p.dni, p.id as id_profesional, m.id as id_matricula, m."numeroMatricula", 
 case when (mm.created_at is not null) then to_char(mm.created_at, 'DD/MM/YYYY')   
-else to_char(m."fechaResolucion", 'DD/MM/YYYY')  end as fecha_resolucion
+else to_char(m."fechaResolucion", 'DD/MM/YYYY')  end as fecha_resolucion,
+count(l.id) as cantlegajos 
 FROM  
 public.entidad e 
 INNER JOIN solicitud s ON (e.id=s.entidad) 
 INNER JOIN public.profesional p ON (p.id=e.id)
 LEFT JOIN public.matricula m ON (m.entidad= e.id) 
-LEFT JOIN public.matricula_movimiento mm ON (mm.matricula=m.id)  
+LEFT JOIN public.matricula_movimiento mm ON (mm.matricula=m.id)
+LEFT JOIN public.legajo l on (l.matricula=m.id)  
 WHERE (m."idMigracion">0) and  s.id  = cast( $P{solicitud_id} as INTEGER) and mm.movimiento=2
 GROUP BY s.entidad, s.fecha, s.numero, p.nombre, p.apellido, p.dni, p.id, m.id, m."numeroMatricula", m."fechaResolucion", mm.created_at]]>
 	</queryString>
@@ -113,73 +177,47 @@ GROUP BY s.entidad, s.fecha, s.numero, p.nombre, p.apellido, p.dni, p.id, m.id, 
 	<field name="fecha_resolucion" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="fecha_resolucion"/>
 	</field>
+	<field name="cantlegajos" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="cantlegajos"/>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<title>
-		<band height="79" splitType="Stretch">
+	<pageHeader>
+		<band height="80" splitType="Stretch">
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
-				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="1" width="497" height="60" uuid="2efacdb2-4084-4c02-9925-af4a025e87e6"/>
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="1" width="497" height="60" uuid="522e1e1b-1b48-4451-ae89-0bf0df1a3529"/>
 				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
 			</image>
 		</band>
-	</title>
-	<pageHeader>
-		<band splitType="Stretch"/>
 	</pageHeader>
-	<columnHeader>
-		<band height="102" splitType="Stretch">
-			<staticText>
-				<reportElement x="1" y="1" width="316" height="16" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
-				<textElement>
-					<font fontName="klavica" size="12"/>
-				</textElement>
-				<text><![CDATA[CERTIFICADO – Baja Matricular CPAGIN Residual]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="363" y="0" width="116" height="30" uuid="ed08f179-979f-4007-9645-626b1aaa92ff"/>
-				<textElement textAlignment="Right">
-					<font fontName="Estandar-Regular"/>
-				</textElement>
-				<text><![CDATA[Doc.:  M-0009-A-Rev.0
-Fecha:  15-01-2018
-]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1" y="37" width="496" height="31" uuid="014e3b0a-48b6-42d4-b5aa-1cbd11967c08"/>
-				<textElement>
-					<font fontName="Estandar-Regular" size="12"/>
-				</textElement>
-				<text><![CDATA[El COLEGIO DE TÉCNICOS DE NEUQUÉN, a solicitud del interesado, CERTIFICA: -----------------------------------------------------------------------------------------------------------]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
 	<detail>
-		<band height="339" splitType="Stretch">
+		<band height="439" splitType="Stretch">
 			<textField>
-				<reportElement x="1" y="-24" width="496" height="25" uuid="4ddd238a-4b3a-4824-9c08-378099d2f8ad"/>
+				<reportElement x="1" y="75" width="496" height="25" uuid="4ddd238a-4b3a-4824-9c08-378099d2f8ad"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Estandar-Regular" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Que el Señor/a: " + $F{apellido} + " " + $F{nombre} + " - DNI  " + $F{dni}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="0" y="50" width="496" height="60" uuid="8ba0827d-8e71-4033-97f4-778e093671da"/>
+				<reportElement positionType="Float" x="0" y="135" width="496" height="60" uuid="8ba0827d-8e71-4033-97f4-778e093671da"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Estandar-Regular" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Se encuentra inscripto/a en este Colegio Profesional desde el día " +  $F{fecha_resolucion} + " bajo el número de matrícula " + $F{numeroMatricula} + " la cual a partir de la presente se certifica en estado de Baja, adjuntando al presente el archivo histórico de trabajos presentados ante este Colegio."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="1" y="236" width="496" height="94" uuid="6bd70911-c817-48f4-9bd7-3bd22ede2924"/>
+				<reportElement positionType="Float" x="1" y="321" width="496" height="44" uuid="6bd70911-c817-48f4-9bd7-3bd22ede2924">
+					<printWhenExpression><![CDATA[new Boolean($F{cantlegajos}.intValue() == 0)]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Justified">
 					<font fontName="Estandar-Regular" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Entre la fecha " + $F{fecha_resolucion} + " hasta la fecha " + $F{fecha_solicitud} + " el profesional no ha presentado trabajos a intervención de éste Colegio en el libre ejercicio de su profesión. " + "\n"+
-"El presente certificado se extiende para ser presentado ante quien corresponda en Neuquén el día "  + new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Entre la fecha " + $F{fecha_resolucion} + " hasta la fecha " + $F{fecha_solicitud} + " el profesional no ha presentado trabajos a intervención de éste Colegio en el libre ejercicio de su profesión. "]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement stretchType="ContainerBottom" x="1" y="192" width="496" height="19" uuid="6a5d5189-698d-43f2-80c2-f8fee91bf937"/>
+				<reportElement stretchType="ContainerBottom" x="1" y="277" width="496" height="19" uuid="6a5d5189-698d-43f2-80c2-f8fee91bf937"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="ds_movimientos_matricula" uuid="2bc1673a-c9f3-4eb7-a1f8-bec8ce9b6cd8">
 						<datasetParameter name="id_matricula">
@@ -229,42 +267,42 @@ Fecha:  15-01-2018
 				</jr:list>
 			</componentElement>
 			<staticText>
-				<reportElement x="22" y="148" width="170" height="20" uuid="25e92f84-bd42-48c7-b24a-4122178cd2e1"/>
+				<reportElement x="22" y="233" width="170" height="20" uuid="25e92f84-bd42-48c7-b24a-4122178cd2e1"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="11"/>
 				</textElement>
 				<text><![CDATA[Movimientos de Matrícula]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="14" y="172" width="49" height="17" uuid="564e0d2a-e5e2-42c4-bff2-caa56c025021"/>
+				<reportElement x="14" y="257" width="49" height="17" uuid="564e0d2a-e5e2-42c4-bff2-caa56c025021"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="85" y="172" width="70" height="17" uuid="e5e042c0-b119-4501-b7d0-e38e1e577190"/>
+				<reportElement x="85" y="257" width="70" height="17" uuid="e5e042c0-b119-4501-b7d0-e38e1e577190"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Descripción]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="296" y="173" width="84" height="17" uuid="bff3839b-b382-4890-9331-323ff764cde3"/>
+				<reportElement x="296" y="258" width="84" height="17" uuid="bff3839b-b382-4890-9331-323ff764cde3"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Fecha de Acta]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="388" y="173" width="82" height="17" uuid="80897382-3dbb-403d-95e7-ef63e8d5678f"/>
+				<reportElement x="388" y="258" width="82" height="17" uuid="80897382-3dbb-403d-95e7-ef63e8d5678f"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Numero de Acta]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement x="95" y="3" width="365" height="20" uuid="b33b8798-9fc8-4415-bea1-ac8c23148631"/>
+				<reportElement x="95" y="106" width="365" height="20" uuid="b33b8798-9fc8-4415-bea1-ac8c23148631"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="ds_titulos" uuid="4c95e8f4-cd2c-4850-bc84-5a29fa7e8b16">
 						<datasetParameter name="id_profesional">
@@ -284,18 +322,157 @@ Fecha:  15-01-2018
 				</jr:list>
 			</componentElement>
 			<staticText>
-				<reportElement x="1" y="1" width="89" height="19" uuid="5acf90b1-3bd5-45a2-ba0f-7ea6f4b643dc"/>
+				<reportElement x="1" y="104" width="89" height="19" uuid="5acf90b1-3bd5-45a2-ba0f-7ea6f4b643dc"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="12"/>
 				</textElement>
 				<text><![CDATA[De Profesión: ]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="0" y="36" width="496" height="31" uuid="014e3b0a-48b6-42d4-b5aa-1cbd11967c08"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[El COLEGIO DE TÉCNICOS DE NEUQUÉN, a solicitud del interesado, CERTIFICA: -----------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="10" width="316" height="16" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[CERTIFICADO – Baja Matricular CPAGIN Residual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="1" width="116" height="30" uuid="ed08f179-979f-4007-9645-626b1aaa92ff"/>
+				<textElement textAlignment="Right">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Doc.:  M-0009-A-Rev.0
+Fecha:  15-01-2018
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="367" width="497" height="19" uuid="a267418c-43aa-44c7-b070-fa7f965d836a">
+					<printWhenExpression><![CDATA[new Boolean($F{cantlegajos}.intValue() > 0)]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[Se adjunta certificado histórico de trabajos presentados y sus fechas de referencia.]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="0" y="388" width="496" height="46" uuid="5dfccd1f-96ef-4e1f-b028-66e131a1d652"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["El presente certificado se extiende para ser presentado ante quien corresponda en Neuquén el día "  + new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="83">
+			<printWhenExpression><![CDATA[new Boolean($F{cantlegajos}.intValue() > 0)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="1" y="12" width="186" height="16" uuid="9547f9ba-7972-4a16-9501-58dd8bbc20bf"/>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[Histórico de Legajos Técnicos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="32" width="38" height="13" uuid="4836c85e-245c-4c43-b9d7-44417acf4bc7"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Legajo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="32" width="42" height="13" uuid="c0e97081-3efa-4c93-90ee-877f26d61a09"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="106" y="33" width="42" height="13" uuid="bfb1c292-620d-4c06-b25f-bcece71d6615"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="33" width="55" height="13" uuid="e83782e9-7f3f-406c-8b10-2c3f382029d4"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Ubicación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="33" width="42" height="13" uuid="6eed788e-88d2-4c3b-9758-a2740fc68f86"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Tarea]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="1" y="48" width="495" height="30" uuid="5896bd6b-b17f-44cb-9d27-e58c15436f13"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="ds_legajos" uuid="94f88391-fa27-496f-a83e-44de358099cf">
+						<datasetParameter name="matricula_id">
+							<datasetParameterExpression><![CDATA[$F{id_matricula}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="495">
+						<textField>
+							<reportElement x="0" y="0" width="37" height="16" uuid="3378bc2d-53ee-4edb-8a82-9add174da99b"/>
+							<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="37" y="1" width="58" height="15" uuid="2944eb36-0163-41d1-8621-74fc53eaa5c1"/>
+							<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="157" y="0" width="196" height="30" uuid="dc3fc51a-964e-43b0-b3f9-c3216a1f692b">
+								<printWhenExpression><![CDATA[$F{ubicacion}.equals("null")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+							</reportElement>
+							<textElement textAlignment="Justified">
+								<font fontName="Estandar-Regular" size="9"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{ubicacion}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="360" y="1" width="135" height="29" uuid="c2f2d1fe-0980-4c2e-9073-a9f6bb9e6f12"/>
+							<textElement textAlignment="Justified">
+								<font fontName="Estandar-Regular" size="9"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{tarea}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="96" y="1" width="58" height="15" uuid="98b51ca1-1dfe-4f36-89a6-73142f0ba914"/>
+							<textElement>
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<break>
+				<reportElement x="0" y="5" width="100" height="1" uuid="2cd6a882-bd86-4976-afc2-98a989a30e13"/>
+			</break>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="56" splitType="Stretch"/>
-	</columnFooter>
 	<pageFooter>
-		<band height="22" splitType="Stretch"/>
+		<band height="25">
+			<textField>
+				<reportElement x="369" y="1" width="71" height="19" uuid="67ee8f83-b724-4718-8a33-3bd8cec6bc09"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="440" y="1" width="57" height="19" uuid="be9e44fd-f6cc-42ea-b2e3-d86a08f23a7e"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[" de " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 </jasperReport>

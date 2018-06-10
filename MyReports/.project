@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>MyReports</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>net.sf.jasperreports.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>net.sf.jasperreports.nature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>certificado_baja_para_caja.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitud_profesional/certificado_baja_para_caja.jasper</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitud_profesional/certificado_baja_para_caja.jrxml</location>
+		</link>
+	</linkedResources>
+</projectDescription>
