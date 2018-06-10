@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="certificado_matricula" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="193"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="796"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<subDataset name="ds_movimientos_matricula" uuid="8a42a95e-961e-49b2-9574-9f413f930b1d">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="264"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="725"/>
+		<parameter name="id_matricula" class="java.lang.Integer"/>
+		<parameter name="solicitud_id" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[select  mm.created_at as fecha_movimiento, to_char(mm.created_at, 'DD/MM/YYYY') as fecha, tm.valor as descripcion, case when (d.numero is not null) then d.numero else '' end as numero_acta, case when (d.fecha>='2001-01-01') then to_char(d.fecha, 'DD/MM/YYYY')
+Else '' end as fecha_acta
+from matricula_movimiento mm
+inner join t_movimiento_matricula tm on (mm.movimiento =tm.id)
+left join documento d on (mm.documento=d.id)
+left join t_documento td on (td.id=d.tipo)
+where mm.matricula= $P{id_matricula} 
+union
+select fecha as fecha_movimiento, to_char(fecha, 'DD/MM/YYYY') as fecha, 'Baja' as descripcion, '85' as numero_acta, '11/01/2018' as fecha_acta
+from solicitud
+where id=cast( $P{solicitud_id} as INTEGER)]]>
+		</queryString>
+		<field name="fecha_movimiento" class="java.sql.Date">
+			<property name="com.jaspersoft.studio.field.label" value="fecha_movimiento"/>
+		</field>
+		<field name="fecha" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+		</field>
+		<field name="descripcion" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		</field>
+		<field name="numero_acta" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="numero_acta"/>
+		</field>
+		<field name="fecha_acta" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="fecha_acta"/>
+		</field>
+		<sortField name="fecha_movimiento"/>
+	</subDataset>
+	<subDataset name="ds_titulos" uuid="d0238ed9-9fa7-4dc8-b992-531abfb5c131">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<parameter name="id_profesional" class="java.lang.Integer"/>
+		<queryString language="SQL">
+			<![CDATA[select pt.id, nombre
+from profesional_titulo pt  
+INNER JOIN institucion_titulo t on (t.id=pt.titulo) 
+WHERE pt.profesional=$P{id_profesional}
+order by pt.id]]>
+		</queryString>
+		<field name="id" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.label" value="id"/>
+		</field>
+		<field name="nombre" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		</field>
+	</subDataset>
+	<parameter name="solicitud_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT s.entidad as id_entidad, to_char(s.fecha, 'DD/MM/YYYY') as fecha_solicitud, s.numero as num_solicitud, p.nombre, p.apellido, p.dni, p.id as id_profesional, m.id as id_matricula, m."numeroMatricula", 
+case when (mm.created_at is not null) then to_char(mm.created_at, 'DD/MM/YYYY')   
+else to_char(m."fechaResolucion", 'DD/MM/YYYY')  end as fecha_resolucion
+FROM  
+public.entidad e 
+INNER JOIN solicitud s ON (e.id=s.entidad) 
+INNER JOIN public.profesional p ON (p.id=e.id)
+LEFT JOIN public.matricula m ON (m.entidad= e.id) 
+LEFT JOIN public.matricula_movimiento mm ON (mm.matricula=m.id)  
+WHERE (m."idMigracion">0) and  s.id  = cast( $P{solicitud_id} as INTEGER) and mm.movimiento=2
+GROUP BY s.entidad, s.fecha, s.numero, p.nombre, p.apellido, p.dni, p.id, m.id, m."numeroMatricula", m."fechaResolucion", mm.created_at]]>
+	</queryString>
+	<field name="id_entidad" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_entidad"/>
+	</field>
+	<field name="fecha_solicitud" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fecha_solicitud"/>
+	</field>
+	<field name="num_solicitud" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="num_solicitud"/>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+	</field>
+	<field name="apellido" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="apellido"/>
+	</field>
+	<field name="dni" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="dni"/>
+	</field>
+	<field name="id_profesional" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_profesional"/>
+	</field>
+	<field name="id_matricula" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id_matricula"/>
+	</field>
+	<field name="numeroMatricula" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="numeroMatricula"/>
+	</field>
+	<field name="fecha_resolucion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fecha_resolucion"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="1" width="497" height="60" uuid="2efacdb2-4084-4c02-9925-af4a025e87e6"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="102" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="1" width="316" height="16" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[CERTIFICADO – Baja Matricular CPAGIN Residual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="0" width="116" height="30" uuid="ed08f179-979f-4007-9645-626b1aaa92ff"/>
+				<textElement textAlignment="Right">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Doc.:  M-0009-A-Rev.0
+Fecha:  15-01-2018
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="37" width="496" height="31" uuid="014e3b0a-48b6-42d4-b5aa-1cbd11967c08"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[El COLEGIO DE TÉCNICOS DE NEUQUÉN, a solicitud del interesado, CERTIFICA: -----------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="339" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="-24" width="496" height="25" uuid="4ddd238a-4b3a-4824-9c08-378099d2f8ad"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Que el Señor/a: " + $F{apellido} + " " + $F{nombre} + " - DNI  " + $F{dni}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="0" y="50" width="496" height="60" uuid="8ba0827d-8e71-4033-97f4-778e093671da"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Se encuentra inscripto/a en este Colegio Profesional desde el día " +  $F{fecha_resolucion} + " bajo el número de matrícula " + $F{numeroMatricula} + " la cual a partir de la presente se certifica en estado de Baja, adjuntando al presente el archivo histórico de trabajos presentados ante este Colegio."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="1" y="236" width="496" height="94" uuid="6bd70911-c817-48f4-9bd7-3bd22ede2924"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Entre la fecha " + $F{fecha_resolucion} + " hasta la fecha " + $F{fecha_solicitud} + " el profesional no ha presentado trabajos a intervención de éste Colegio en el libre ejercicio de su profesión. " + "\n"+
+"El presente certificado se extiende para ser presentado ante quien corresponda en Neuquén el día "  + new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement stretchType="ContainerBottom" x="1" y="192" width="496" height="19" uuid="6a5d5189-698d-43f2-80c2-f8fee91bf937"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="ds_movimientos_matricula" uuid="2bc1673a-c9f3-4eb7-a1f8-bec8ce9b6cd8">
+						<datasetParameter name="id_matricula">
+							<datasetParameterExpression><![CDATA[$F{id_matricula}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="solicitud_id">
+							<datasetParameterExpression><![CDATA[$P{solicitud_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="19" width="496">
+						<textField>
+							<reportElement x="84" y="2" width="207" height="16" uuid="be74fcc9-b0ad-4f44-9f2b-74e7fa8c9222"/>
+							<textElement>
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="14" y="2" width="66" height="16" uuid="10ab2e7a-5c1a-4bd4-9430-3b3ce30c533e"/>
+							<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+						</textField>
+						<line>
+							<reportElement x="80" y="2" width="1" height="16" uuid="46891557-3abf-46f7-9ce0-ea51ad3708df"/>
+						</line>
+						<line>
+							<reportElement x="292" y="0" width="1" height="16" uuid="5c03446c-9751-4fb5-81ab-0da1c9cbc089"/>
+						</line>
+						<textField>
+							<reportElement x="295" y="4" width="86" height="14" uuid="ac8e6d05-b19c-466c-b082-a9edd6ec5c41"/>
+							<textElement>
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{fecha_acta}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="387" y="4" width="88" height="14" uuid="96fb8d30-e9ed-4d51-adf6-9fed9b75ef7a"/>
+							<textElement>
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{numero_acta}]]></textFieldExpression>
+						</textField>
+						<line>
+							<reportElement x="384" y="2" width="1" height="16" uuid="f1f29581-e4fa-4890-9d17-9199889a6dc3"/>
+						</line>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement x="22" y="148" width="170" height="20" uuid="25e92f84-bd42-48c7-b24a-4122178cd2e1"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="11"/>
+				</textElement>
+				<text><![CDATA[Movimientos de Matrícula]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="172" width="49" height="17" uuid="564e0d2a-e5e2-42c4-bff2-caa56c025021"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="172" width="70" height="17" uuid="e5e042c0-b119-4501-b7d0-e38e1e577190"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="173" width="84" height="17" uuid="bff3839b-b382-4890-9331-323ff764cde3"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<text><![CDATA[Fecha de Acta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="388" y="173" width="82" height="17" uuid="80897382-3dbb-403d-95e7-ef63e8d5678f"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="10"/>
+				</textElement>
+				<text><![CDATA[Numero de Acta]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="95" y="3" width="365" height="20" uuid="b33b8798-9fc8-4415-bea1-ac8c23148631"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="ds_titulos" uuid="4c95e8f4-cd2c-4850-bc84-5a29fa7e8b16">
+						<datasetParameter name="id_profesional">
+							<datasetParameterExpression><![CDATA[$F{id_profesional}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="20" width="365">
+						<textField>
+							<reportElement x="2" y="1" width="275" height="19" uuid="dac43d66-f1f0-4c22-840d-3ec95cd024f8"/>
+							<textElement textAlignment="Left">
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement x="1" y="1" width="89" height="19" uuid="5acf90b1-3bd5-45a2-ba0f-7ea6f4b643dc"/>
+				<textElement>
+					<font fontName="Estandar-Regular" size="12"/>
+				</textElement>
+				<text><![CDATA[De Profesión: ]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="56" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>
