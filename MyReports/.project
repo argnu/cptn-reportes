@@ -22,6 +22,16 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>boletas_impresion.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/JaspersoftWorkspace/MyReports/boletas_impresion.jasper</location>
+		</link>
+		<link>
+			<name>boletas_impresion.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/JaspersoftWorkspace/MyReports/boletas_impresion.jrxml</location>
+		</link>
+		<link>
 			<name>certificado_baja_para_caja.jasper</name>
 			<type>1</type>
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitud_profesional/certificado_baja_para_caja.jasper</location>
@@ -29,7 +39,77 @@
 		<link>
 			<name>certificado_baja_para_caja.jrxml</name>
 			<type>1</type>
-			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitud_profesional/certificado_baja_para_caja.jrxml</location>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jrxml</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_1.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jasper</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_1.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jrxml</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_2.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jasper</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_2.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jrxml</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_3.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jasper</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_3.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jrxml</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_4.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jasper</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_4.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jrxml</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_5.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jasper</location>
+		</link>
+		<link>
+			<name>certificado_baja_para_caja_5.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/certificado_baja_para_caja.jrxml</location>
+		</link>
+		<link>
+			<name>recibo.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/recibo.jasper</location>
+		</link>
+		<link>
+			<name>recibo.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/recibo.jrxml</location>
+		</link>
+		<link>
+			<name>solicitud_matricula_profesional.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/solicitud_matricula_profesional.jasper</location>
+		</link>
+		<link>
+			<name>solicitud_matricula_profesional.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/solicitudes/solicitud_matricula_profesional.jrxml</location>
 		</link>
 	</linkedResources>
 </projectDescription>

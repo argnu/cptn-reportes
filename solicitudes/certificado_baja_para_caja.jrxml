@@ -54,7 +54,7 @@ where id=cast( $P{solicitud_id} as INTEGER)]]>
 	</subDataset>
 	<subDataset name="ds_titulos" uuid="d0238ed9-9fa7-4dc8-b992-531abfb5c131">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<parameter name="id_profesional" class="java.lang.Integer"/>
 		<queryString language="SQL">
 			<![CDATA[select pt.id, nombre
@@ -72,7 +72,7 @@ order by pt.id]]>
 	</subDataset>
 	<subDataset name="ds_legajos" uuid="3d2ad8b6-8741-4716-ad48-2bdfbced0de8">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn-prueba"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn_prueba"/>
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="141"/>
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="848"/>
 		<parameter name="matricula_id" class="java.lang.Integer"/>
@@ -92,7 +92,8 @@ inner join tarea_subcategoria ts on (ts.id = l.subcategoria)
 inner join tarea_categoria tc on (tc.id=ts.categoria)
 left join legajo_comitente lc on (lc.legajo=l.id)
 left join persona com on (lc.persona= com.id)
-where matricula= $P{matricula_id}]]>
+where matricula= $P{matricula_id}
+Order by fecha_solicitud]]>
 		</queryString>
 		<field name="numero" class="java.lang.Integer">
 			<property name="com.jaspersoft.studio.field.label" value="numero"/>
@@ -141,10 +142,11 @@ FROM
 public.entidad e 
 INNER JOIN solicitud s ON (e.id=s.entidad) 
 INNER JOIN public.profesional p ON (p.id=e.id)
-LEFT JOIN public.matricula m ON (m.entidad= e.id) 
+LEFT JOIN profesional p_anterior ON (p_anterior.dni= p.dni)
+LEFT JOIN public.matricula m ON (m.entidad= p_anterior.id)
 LEFT JOIN public.matricula_movimiento mm ON (mm.matricula=m.id)
 LEFT JOIN public.legajo l on (l.matricula=m.id)  
-WHERE (m."idMigracion">0) and  s.id  = cast( $P{solicitud_id} as INTEGER) and mm.movimiento=2
+WHERE  s.id  = cast( $P{solicitud_id} as INTEGER) and mm.movimiento=2
 GROUP BY s.entidad, s.fecha, s.numero, p.nombre, p.apellido, p.dni, p.id, m.id, m."numeroMatricula", m."fechaResolucion", mm.created_at]]>
 	</queryString>
 	<field name="id_entidad" class="java.lang.Integer">

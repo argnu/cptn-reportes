@@ -443,14 +443,14 @@ where profesional =$P{id_entidad}]]>
 				<reportElement positionType="Float" x="0" y="162" width="497" height="1" uuid="aa620c4e-905f-4e2f-8c98-90ab372a02f4"/>
 			</line>
 			<staticText>
-				<reportElement positionType="Float" x="0" y="166" width="118" height="14" uuid="2bc1be7f-54b5-4345-82fa-0bc568e99230"/>
+				<reportElement positionType="Float" x="0" y="164" width="118" height="14" uuid="2bc1be7f-54b5-4345-82fa-0bc568e99230"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="klavica" size="11"/>
 				</textElement>
 				<text><![CDATA[Formación]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement positionType="Float" x="0" y="185" width="495" height="37" uuid="239af6d6-1d2d-458d-9311-4c32e9859cf6"/>
+				<reportElement positionType="Float" x="0" y="180" width="495" height="52" uuid="239af6d6-1d2d-458d-9311-4c32e9859cf6"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="formacion" uuid="a032a084-313f-4f4f-8213-71d4a105c963">
 						<datasetParameter name="id_entidad">
@@ -458,65 +458,65 @@ where profesional =$P{id_entidad}]]>
 						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
-					<jr:listContents height="37" width="495">
+					<jr:listContents height="52" width="495">
 						<textField>
-							<reportElement x="51" y="0" width="195" height="17" uuid="ca853324-fe07-4ac9-98be-de88d629643e"/>
+							<reportElement x="51" y="0" width="444" height="17" uuid="ca853324-fe07-4ac9-98be-de88d629643e"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="extandart"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{nombre_titulo}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="321" y="0" width="174" height="17" uuid="bb762d63-6561-4e16-ae81-6e879633b12d"/>
+							<reportElement x="74" y="17" width="420" height="17" uuid="bb762d63-6561-4e16-ae81-6e879633b12d"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="extandart"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{institucion}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="425" y="19" width="70" height="18" uuid="8489b087-69f8-42a2-b3a2-93c31a0a0bea"/>
+							<reportElement x="426" y="34" width="66" height="18" uuid="8489b087-69f8-42a2-b3a2-93c31a0a0bea"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="extandart"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{fecha_egreso}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="260" y="19" width="58" height="17" uuid="23448a3c-acd4-4cb8-bc15-e688902c15da"/>
+							<reportElement x="258" y="35" width="58" height="17" uuid="23448a3c-acd4-4cb8-bc15-e688902c15da"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="extandart"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{fecha_emision}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="52" y="19" width="105" height="17" uuid="53caea7c-ab38-4f94-aced-9feeac3b48a2"/>
+							<reportElement x="41" y="35" width="121" height="17" uuid="53caea7c-ab38-4f94-aced-9feeac3b48a2"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="extandart"/>
 							</textElement>
 							<textFieldExpression><![CDATA[$F{nivel}]]></textFieldExpression>
 						</textField>
 						<staticText>
-							<reportElement x="251" y="0" width="70" height="17" uuid="f7d3740e-a16d-4cbe-9546-5798970afa23"/>
+							<reportElement x="1" y="17" width="70" height="17" uuid="f7d3740e-a16d-4cbe-9546-5798970afa23"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="Estandar-Regular" size="12"/>
 							</textElement>
 							<text><![CDATA[Institución: ]]></text>
 						</staticText>
 						<staticText>
-							<reportElement x="2" y="19" width="46" height="17" uuid="4b371ee9-0b92-4d6f-b5a9-333ff6d71d8a"/>
+							<reportElement x="1" y="35" width="38" height="17" uuid="4b371ee9-0b92-4d6f-b5a9-333ff6d71d8a"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="Estandar-Regular" size="12"/>
 							</textElement>
 							<text><![CDATA[Nivel : ]]></text>
 						</staticText>
 						<staticText>
-							<reportElement x="162" y="19" width="95" height="17" uuid="b46df695-3f8b-44ee-be1c-4ebee60f4dd0"/>
+							<reportElement x="162" y="35" width="96" height="17" uuid="b46df695-3f8b-44ee-be1c-4ebee60f4dd0"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="Estandar-Regular" size="12"/>
 							</textElement>
 							<text><![CDATA[Fecha Emisión: ]]></text>
 						</staticText>
 						<staticText>
-							<reportElement x="318" y="19" width="107" height="17" uuid="d093a7ac-ffbb-4e1c-88bd-37d2aa386e87"/>
+							<reportElement x="317" y="35" width="107" height="17" uuid="d093a7ac-ffbb-4e1c-88bd-37d2aa386e87"/>
 							<textElement verticalAlignment="Middle">
 								<font fontName="Estandar-Regular" size="12"/>
 							</textElement>
@@ -533,17 +533,17 @@ where profesional =$P{id_entidad}]]>
 				</jr:list>
 			</componentElement>
 			<staticText>
-				<reportElement positionType="Float" x="0" y="230" width="118" height="14" uuid="35c74852-bd86-4d58-bba0-cfe76c1a5f41"/>
+				<reportElement positionType="Float" x="0" y="234" width="118" height="14" uuid="35c74852-bd86-4d58-bba0-cfe76c1a5f41"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="klavica" size="11"/>
 				</textElement>
 				<text><![CDATA[Caja Previsional]]></text>
 			</staticText>
 			<line>
-				<reportElement positionType="Float" x="3" y="226" width="497" height="1" uuid="2b571551-62ae-4c7b-ade3-ec7733aa4715"/>
+				<reportElement positionType="Float" x="3" y="231" width="497" height="1" uuid="2b571551-62ae-4c7b-ade3-ec7733aa4715"/>
 			</line>
 			<componentElement>
-				<reportElement positionType="Float" x="0" y="246" width="497" height="30" uuid="245cd336-2a20-491d-a3cd-073729a0052e"/>
+				<reportElement positionType="Float" x="0" y="249" width="497" height="30" uuid="245cd336-2a20-491d-a3cd-073729a0052e"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="caja_previsional" uuid="c5f82a89-df54-4fb8-9add-edc0e24b4f0c">
 						<datasetParameter name="id_entidad">
