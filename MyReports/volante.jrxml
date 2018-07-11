@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="volante" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn_prueba"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
@@ -14,20 +14,34 @@
 	<subDataset name="ds_volante_items" uuid="83cac93a-18c8-4ea5-893b-f72cf4127761">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn_prueba"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="145"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="845"/>
 		<parameter name="volante_id" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[select case when (leg.id is not null) then 
-bi.descripcion || ' Nomenclatura ' || coalesce (leg.nomenclatura, '') 
-else bi.descripcion end as descripcion 
+			<![CDATA[select 
+case when (leg.id is not null and bi.descripcion not like '%Nomenclatura%') then 
+bi.descripcion || '-  Nomenclatura ' || coalesce (leg.nomenclatura, '') 
+else bi.descripcion end as descripcion,
+case when (leg.id is not null and bi.descripcion not like '%Ctte%') then 
+bi.descripcion  || ' Cttes ' || array_to_string(array_agg(p.nombre || ' ' || coalesce(pf.apellido, '')), ',') 
+else '' end as descripcion_ctte 
 , b.numero, bi.importe, vb.interes  as interes 
 from volante_pago_boleta vb
 inner join boleta b on (vb.boleta= b.id)
 left join legajo leg on (b.legajo= leg.id)
+left join legajo_comitente lc on (lc.legajo = leg.id) 
+left join persona p on (lc.persona = p.id)
+left join persona_fisica pf on (pf.id=p.id)
+left join persona_juridica pj on (p.id= pj.id)
 inner join boleta_item bi on (bi.boleta=b.id)
-where vb.volante= $P{volante_id}]]>
+where vb.volante= $P{volante_id}
+group by leg.id, bi.descripcion, b.numero, bi.importe, vb.interes]]>
 		</queryString>
 		<field name="descripcion" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		</field>
+		<field name="descripcion_ctte" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="descripcion_ctte"/>
 		</field>
 		<field name="numero" class="java.lang.Integer">
 			<property name="com.jaspersoft.studio.field.label" value="numero"/>
@@ -183,11 +197,11 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						</datasetRun>
 						<jr:listContents height="30" width="492">
 							<textField>
-								<reportElement x="10" y="2" width="290" height="28" uuid="4febc50d-10d8-4464-9769-e70b23e1a7a8"/>
+								<reportElement x="10" y="2" width="330" height="28" uuid="4febc50d-10d8-4464-9769-e70b23e1a7a8"/>
 								<textElement>
-									<font fontName="Estandar-Regular"/>
+									<font fontName="extandart"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte} ]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00">
 								<reportElement x="354" y="2" width="74" height="12" uuid="3105b03d-f425-4a96-8a76-59ad333a01f5"/>
@@ -233,9 +247,9 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<text><![CDATA[Interés]]></text>
 				</staticText>
 				<textField>
-					<reportElement positionType="Float" x="319" y="151" width="168" height="14" uuid="6a4ed4f8-d9c9-4b9c-a5e9-6ef01c2bc224"/>
+					<reportElement positionType="Float" x="396" y="151" width="91" height="14" uuid="6a4ed4f8-d9c9-4b9c-a5e9-6ef01c2bc224"/>
 					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA["SubTotal     $"+  $F{subtotal}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement positionType="Float" x="319" y="148" width="170" height="1" uuid="5344ea4b-3074-4006-bd18-fafd9089f4ea"/>
@@ -245,7 +259,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<textElement textAlignment="Right">
 						<font fontName="Estandar-Regular"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Interés       $"+ $F{interes_total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{interes_total}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement positionType="Float" x="396" y="182" width="92" height="14" uuid="c2b0ccbb-1d2a-4006-b9ab-e79d8acd599a"/>
@@ -254,26 +268,6 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["Total      $"+ $F{importe_total}]]></textFieldExpression>
 				</textField>
-				<componentElement>
-					<reportElement positionType="Float" x="6" y="156" width="270" height="21" uuid="ab375e78-45d8-4bf9-9a9f-2a63bf9c6045"/>
-					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-						<datasetRun subDataset="ds_comitentes" uuid="315c6cdc-69bc-4977-9d0d-556b137680c0">
-							<datasetParameter name="volante_id">
-								<datasetParameterExpression><![CDATA[$F{id_volante}]]></datasetParameterExpression>
-							</datasetParameter>
-							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-						</datasetRun>
-						<jr:listContents height="21" width="270">
-							<textField>
-								<reportElement x="6" y="0" width="264" height="21" uuid="ea8dfe37-2541-4ac7-8a56-f95a99c72d8a"/>
-								<textElement>
-									<font fontName="Estandar-Regular"/>
-								</textElement>
-								<textFieldExpression><![CDATA["Comitente: "+ $F{cuit} + $F{nombre}]]></textFieldExpression>
-							</textField>
-						</jr:listContents>
-					</jr:list>
-				</componentElement>
 				<frame>
 					<reportElement x="0" y="199" width="498" height="196" uuid="02f45601-900e-423c-b42a-d9531c8b5e02"/>
 					<box>
@@ -334,38 +328,6 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						</textElement>
 						<textFieldExpression><![CDATA["Fecha de Vto: " + $F{fecha_vto}]]></textFieldExpression>
 					</textField>
-					<componentElement>
-						<reportElement x="0" y="120" width="492" height="30" uuid="3f9a67e0-0961-4db5-88e0-9a5dfaa84693"/>
-						<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-							<datasetRun subDataset="ds_volante_items" uuid="9fa28359-6abf-4a9e-a078-e30539d88dcb">
-								<datasetParameter name="volante_id">
-									<datasetParameterExpression><![CDATA[$F{id_volante}]]></datasetParameterExpression>
-								</datasetParameter>
-								<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-							</datasetRun>
-							<jr:listContents height="30" width="492">
-								<textField>
-									<reportElement x="10" y="2" width="290" height="28" uuid="18c058e9-2af7-4e31-8ff4-6ce0f6cc6cc8"/>
-									<textElement>
-										<font fontName="Estandar-Regular"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
-								</textField>
-								<textField pattern="###0.00;-###0.00">
-									<reportElement x="354" y="2" width="74" height="12" uuid="1090c7a1-d40d-43fb-aa13-d2068aa0ca7d"/>
-									<textElement textAlignment="Right">
-										<font fontName="Estandar-Regular"/>
-									</textElement>
-									<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
-								</textField>
-								<textField pattern="###0.00;-###0.00">
-									<reportElement x="439" y="2" width="47" height="12" uuid="9e9f8e30-ea12-4dab-83ea-47d84d8bc503"/>
-									<textElement textAlignment="Right"/>
-									<textFieldExpression><![CDATA[$F{interes}]]></textFieldExpression>
-								</textField>
-							</jr:listContents>
-						</jr:list>
-					</componentElement>
 					<textField>
 						<reportElement x="210" y="10" width="107" height="19" uuid="3be96fba-55c8-4a34-a629-b53334604442"/>
 						<textElement verticalAlignment="Middle">
@@ -394,21 +356,9 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						</textElement>
 						<text><![CDATA[Interés]]></text>
 					</staticText>
-					<textField>
-						<reportElement positionType="Float" x="319" y="151" width="168" height="14" uuid="ec52606b-0644-4a12-bf8a-b86295564e23"/>
-						<textElement textAlignment="Right"/>
-						<textFieldExpression><![CDATA["SubTotal     $"+  $F{subtotal}]]></textFieldExpression>
-					</textField>
 					<line>
 						<reportElement positionType="Float" x="319" y="148" width="170" height="1" uuid="1e670811-1b68-46ed-b865-69fdc8ab19fe"/>
 					</line>
-					<textField>
-						<reportElement positionType="Float" x="396" y="166" width="92" height="14" uuid="93d527db-3981-42fc-9457-d6ce1949ec38"/>
-						<textElement textAlignment="Right">
-							<font fontName="Estandar-Regular"/>
-						</textElement>
-						<textFieldExpression><![CDATA["Interés       $"+ $F{interes_total}]]></textFieldExpression>
-					</textField>
 					<textField>
 						<reportElement positionType="Float" x="396" y="182" width="92" height="14" uuid="1ac6ffe7-b00f-457c-b165-c72bdd10db3b"/>
 						<textElement textAlignment="Right">
@@ -416,27 +366,67 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						</textElement>
 						<textFieldExpression><![CDATA["Total      $"+ $F{importe_total}]]></textFieldExpression>
 					</textField>
+					<textField>
+						<reportElement x="331" y="151" width="60" height="14" uuid="0dfa37bc-2ff3-41b6-9898-5baffb09eb40"/>
+						<textFieldExpression><![CDATA["SubTotal"]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement positionType="Float" x="397" y="151" width="91" height="14" uuid="34bc0781-4a9b-489e-8a1a-06473e5dcae2"/>
+						<textElement textAlignment="Right"/>
+						<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="331" y="167" width="60" height="14" uuid="69e65ce8-4fdd-45a4-9623-596f63e7fb55"/>
+						<textFieldExpression><![CDATA["Interés"]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement positionType="Float" x="396" y="166" width="92" height="14" uuid="6c345dd5-a73f-476d-9410-54f1b25b131a"/>
+						<textElement textAlignment="Right">
+							<font fontName="Estandar-Regular"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{interes_total}]]></textFieldExpression>
+					</textField>
 					<componentElement>
-						<reportElement positionType="Float" x="6" y="156" width="270" height="21" uuid="0f4eccd9-dcb3-43f7-8c09-f7c664bf53a9"/>
+						<reportElement x="0" y="120" width="492" height="30" uuid="e689b1d7-00e7-404b-8146-df9de619b1bb"/>
 						<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-							<datasetRun subDataset="ds_comitentes" uuid="cd5d0cce-2a40-4fd4-a995-075fb376a6d2">
+							<datasetRun subDataset="ds_volante_items" uuid="99021363-555b-434d-a3fd-35f66ec1cadf">
 								<datasetParameter name="volante_id">
 									<datasetParameterExpression><![CDATA[$F{id_volante}]]></datasetParameterExpression>
 								</datasetParameter>
 								<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							</datasetRun>
-							<jr:listContents height="21" width="270">
+							<jr:listContents height="30" width="492">
 								<textField>
-									<reportElement x="6" y="0" width="264" height="21" uuid="1ff6a82a-5b70-499b-82e9-63579a97855d"/>
+									<reportElement x="10" y="2" width="330" height="28" uuid="2e9b1f35-d0c3-4a12-b2a0-6aed28962e66"/>
 									<textElement>
+										<font fontName="extandart"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte} ]]></textFieldExpression>
+								</textField>
+								<textField pattern="###0.00;-###0.00">
+									<reportElement x="354" y="2" width="74" height="12" uuid="69eeb9d7-1b2e-4afc-91bd-5862a39182de"/>
+									<textElement textAlignment="Right">
 										<font fontName="Estandar-Regular"/>
 									</textElement>
-									<textFieldExpression><![CDATA["Comitente: "+ $F{cuit} + $F{nombre}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+								</textField>
+								<textField pattern="###0.00;-###0.00">
+									<reportElement x="439" y="2" width="47" height="12" uuid="9cbe6f48-181a-46f8-a7c4-768023fd6409"/>
+									<textElement textAlignment="Right"/>
+									<textFieldExpression><![CDATA[$F{interes}]]></textFieldExpression>
 								</textField>
 							</jr:listContents>
 						</jr:list>
 					</componentElement>
 				</frame>
+				<textField>
+					<reportElement x="330" y="151" width="60" height="14" uuid="2edd9264-dbf3-4951-97d3-9ea0e74814fb"/>
+					<textFieldExpression><![CDATA["SubTotal"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="331" y="167" width="60" height="14" uuid="39876451-625f-40b9-b09d-7672213b54b1"/>
+					<textFieldExpression><![CDATA["Interés"]]></textFieldExpression>
+				</textField>
 			</frame>
 			<frame>
 				<reportElement x="0" y="386" width="498" height="196" uuid="6e302f0a-d42a-4832-b901-39c1d8e705bc"/>
@@ -498,38 +488,6 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["Fecha de Vto: " + $F{fecha_vto}]]></textFieldExpression>
 				</textField>
-				<componentElement>
-					<reportElement x="0" y="120" width="492" height="30" uuid="cde232e8-0fb4-44e6-9fb6-749d0c00f7ac"/>
-					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-						<datasetRun subDataset="ds_volante_items" uuid="f2a41875-48cc-4bab-9f19-ee2ff7681023">
-							<datasetParameter name="volante_id">
-								<datasetParameterExpression><![CDATA[$F{id_volante}]]></datasetParameterExpression>
-							</datasetParameter>
-							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-						</datasetRun>
-						<jr:listContents height="30" width="492">
-							<textField>
-								<reportElement x="10" y="2" width="290" height="28" uuid="7641a500-d7c0-4ef8-a905-0e94c9828d56"/>
-								<textElement>
-									<font fontName="Estandar-Regular"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
-							</textField>
-							<textField pattern="###0.00;-###0.00">
-								<reportElement x="354" y="2" width="74" height="12" uuid="8884c13e-e3f9-4fe0-9c16-dee29d8e6f1e"/>
-								<textElement textAlignment="Right">
-									<font fontName="Estandar-Regular"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
-							</textField>
-							<textField pattern="###0.00;-###0.00">
-								<reportElement x="439" y="2" width="47" height="12" uuid="44ce7b77-af0d-43fb-850f-e772d7a54f91"/>
-								<textElement textAlignment="Right"/>
-								<textFieldExpression><![CDATA[$F{interes}]]></textFieldExpression>
-							</textField>
-						</jr:listContents>
-					</jr:list>
-				</componentElement>
 				<textField>
 					<reportElement x="210" y="10" width="107" height="19" uuid="a6cbc8ed-1473-4622-8ffe-e277ffc6433f"/>
 					<textElement verticalAlignment="Middle">
@@ -558,21 +516,9 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					</textElement>
 					<text><![CDATA[Interés]]></text>
 				</staticText>
-				<textField>
-					<reportElement positionType="Float" x="319" y="151" width="168" height="14" uuid="5e4a1119-febe-47d3-b757-4a0051c80185"/>
-					<textElement textAlignment="Right"/>
-					<textFieldExpression><![CDATA["SubTotal     $"+  $F{subtotal}]]></textFieldExpression>
-				</textField>
 				<line>
 					<reportElement positionType="Float" x="319" y="148" width="170" height="1" uuid="7c477893-ba9e-4eec-bc81-3cbeef707ec0"/>
 				</line>
-				<textField>
-					<reportElement positionType="Float" x="396" y="166" width="92" height="14" uuid="918a2265-7190-4f26-827c-342f9eccf3a2"/>
-					<textElement textAlignment="Right">
-						<font fontName="Estandar-Regular"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Interés       $"+ $F{interes_total}]]></textFieldExpression>
-				</textField>
 				<textField>
 					<reportElement positionType="Float" x="396" y="182" width="92" height="14" uuid="4a396b53-936c-40b0-8242-651643c9facb"/>
 					<textElement textAlignment="Right">
@@ -580,22 +526,54 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["Total      $"+ $F{importe_total}]]></textFieldExpression>
 				</textField>
+				<textField>
+					<reportElement x="331" y="167" width="60" height="14" uuid="a240ab74-6985-4572-a227-1a9593bf4941"/>
+					<textFieldExpression><![CDATA["Interés"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="397" y="151" width="91" height="14" uuid="6e0b2e41-da39-4f2d-9486-74c09eb87015"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" x="396" y="166" width="92" height="14" uuid="71be74c3-88f4-4844-bdb3-7d4c6770462c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Estandar-Regular"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{interes_total}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="331" y="151" width="60" height="14" uuid="2ddd7b5a-ad1e-45d3-8c4e-dcfff42e1dab"/>
+					<textFieldExpression><![CDATA["SubTotal"]]></textFieldExpression>
+				</textField>
 				<componentElement>
-					<reportElement positionType="Float" x="6" y="156" width="270" height="21" uuid="42c5783a-9164-44d5-902d-a3b4e1386615"/>
+					<reportElement x="0" y="120" width="492" height="30" uuid="ee998338-d070-4c66-85b6-6018e7efc3b9"/>
 					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-						<datasetRun subDataset="ds_comitentes" uuid="af1e2cee-89e2-4e82-9658-285edac3c18a">
+						<datasetRun subDataset="ds_volante_items" uuid="4cff2ed8-a32a-420a-b898-7e5505bc4f30">
 							<datasetParameter name="volante_id">
 								<datasetParameterExpression><![CDATA[$F{id_volante}]]></datasetParameterExpression>
 							</datasetParameter>
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 						</datasetRun>
-						<jr:listContents height="21" width="270">
+						<jr:listContents height="30" width="492">
 							<textField>
-								<reportElement x="6" y="0" width="264" height="21" uuid="4727d6b4-8ef1-4ba1-845a-8b711c031dc1"/>
+								<reportElement x="10" y="2" width="330" height="28" uuid="3a2e8017-b792-4886-b8ef-1870880fbecd"/>
 								<textElement>
+									<font fontName="extandart"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte} ]]></textFieldExpression>
+							</textField>
+							<textField pattern="###0.00;-###0.00">
+								<reportElement x="354" y="2" width="74" height="12" uuid="b02479a7-7c57-41c1-b6d0-deb050d5793e"/>
+								<textElement textAlignment="Right">
 									<font fontName="Estandar-Regular"/>
 								</textElement>
-								<textFieldExpression><![CDATA["Comitente: "+ $F{cuit} + $F{nombre}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+							</textField>
+							<textField pattern="###0.00;-###0.00">
+								<reportElement x="439" y="2" width="47" height="12" uuid="6d3e08b0-4305-4978-b6e2-e48cf504b954"/>
+								<textElement textAlignment="Right"/>
+								<textFieldExpression><![CDATA[$F{interes}]]></textFieldExpression>
 							</textField>
 						</jr:listContents>
 					</jr:list>

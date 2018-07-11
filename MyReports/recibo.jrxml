@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="recibo" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Produccion"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
@@ -13,25 +13,31 @@
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="651"/>
 	<subDataset name="ds_recibo_items" uuid="83cac93a-18c8-4ea5-893b-f72cf4127761">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Produccion"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="305"/>
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="684"/>
 		<parameter name="recibo_id" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[select ci.item, bi.descripcion as desc_boleta, 
-case when (leg.id is not null and bi.descripcion not like '%Ctte:%') then 
-bi.descripcion || ' Nomenclatura ' || coalesce (leg.nomenclatura, '')
+			<![CDATA[select ci.item, 
+case when (leg.id is not null and bi.descripcion not like '%Nomenclatura%') then 
+bi.descripcion || ' - Nomenclatura ' || coalesce (leg.nomenclatura, '')  
 else 
 (case when (ci.descripcion like '%Inte%') then ci.descripcion
-else  bi.descripcion end) end as descripcion, ci.importe
+else  bi.descripcion end) end as descripcion, 
+case when (leg.id is not null and bi.descripcion not like '%Ctte%') then 
+ ' Cttes ' || array_to_string(array_agg(p.nombre || ' ' || coalesce(pf.apellido, '')), ',') 
+else '' end as descripcion_ctte,
+ci.importe
 from comprobante_item ci 
 left join boleta b on (ci.boleta= b.id)
 left join boleta_item bi on (bi.boleta=b.id)
--- left join legajo leg on (b.legajo= leg.id)
-left join legajo leg on (b.numero_solicitud= leg.id AND b.tipo_comprobante in (15, 20))
-left join legajo_comitente l on (l.id = leg.id) 
-left join persona p on (l.persona = p.id)
-where ci.comprobante=$P{recibo_id}
+left join legajo leg on (b.legajo= leg.id)
+-- left join legajo leg on (b.numero_solicitud= leg.id AND b.tipo_comprobante in (15, 20))
+left join legajo_comitente lc on (lc.legajo = leg.id) 
+left join persona p on (lc.persona = p.id)
+left join persona_fisica pf on (pf.id=p.id)
+left join persona_juridica pj on (p.id= pj.id)
+where ci.comprobante= $P{recibo_id}
 group by leg.id, ci.item, ci.descripcion, bi.descripcion, leg.nomenclatura, ci.importe
 order by ci.item]]>
 		</queryString>
@@ -40,6 +46,9 @@ order by ci.item]]>
 		</field>
 		<field name="descripcion" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
+		</field>
+		<field name="descripcion_ctte" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="descripcion_ctte"/>
 		</field>
 		<field name="importe" class="java.lang.Double">
 			<property name="com.jaspersoft.studio.field.label" value="importe"/>
@@ -182,40 +191,6 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["Nro Matricula:  " + $F{numeroMatricula}]]></textFieldExpression>
 				</textField>
-				<componentElement>
-					<reportElement positionType="Float" x="1" y="0" width="492" height="23" uuid="42898e80-1477-4596-accb-7429f883c00d"/>
-					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-						<datasetRun subDataset="ds_recibo_items" uuid="1ac4d644-9f77-4419-9539-d545774d4ab0">
-							<datasetParameter name="recibo_id">
-								<datasetParameterExpression><![CDATA[$F{id_recibo}]]></datasetParameterExpression>
-							</datasetParameter>
-							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-						</datasetRun>
-						<jr:listContents height="23" width="492">
-							<textField>
-								<reportElement x="29" y="1" width="371" height="22" uuid="fefecb1a-2eed-4953-9e71-e640e34d5e71"/>
-								<textElement textAlignment="Left">
-									<font fontName="Estandar-Regular" size="9"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
-							</textField>
-							<textField pattern="###0.00;-###0.00">
-								<reportElement x="400" y="1" width="92" height="22" uuid="9f889032-ba0b-4fbc-8408-613cb2b8ced0"/>
-								<textElement textAlignment="Right">
-									<font fontName="Estandar-Regular" size="9"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
-							</textField>
-							<textField>
-								<reportElement x="1" y="1" width="27" height="22" uuid="bb27bef9-20f5-4422-a1a6-34ff3184ef5c"/>
-								<textElement textAlignment="Center">
-									<font fontName="Estandar-Regular" size="9"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
-							</textField>
-						</jr:listContents>
-					</jr:list>
-				</componentElement>
 				<textField>
 					<reportElement x="209" y="-93" width="107" height="19" uuid="f93047e2-2967-4f8a-bfae-e9939a11d92a"/>
 					<textElement verticalAlignment="Middle">
@@ -259,6 +234,40 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["DETALLE DEL PAGO"]]></textFieldExpression>
 				</textField>
+				<componentElement>
+					<reportElement positionType="Float" x="1" y="0" width="492" height="23" uuid="b6f5f471-2ad6-45b2-9748-1de8edba2dec"/>
+					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+						<datasetRun subDataset="ds_recibo_items" uuid="c0ee3328-6aaa-4b79-914c-2e667f21b7ef">
+							<datasetParameter name="recibo_id">
+								<datasetParameterExpression><![CDATA[$F{id_recibo}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:listContents height="23" width="492">
+							<textField>
+								<reportElement x="29" y="1" width="371" height="22" uuid="698bf6a3-f64d-4e27-a6e7-17ec5d7892aa"/>
+								<textElement textAlignment="Left">
+									<font fontName="Estandar-Regular" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descripcion} + ' '+ $F{descripcion_ctte}]]></textFieldExpression>
+							</textField>
+							<textField pattern="###0.00;-###0.00">
+								<reportElement x="400" y="1" width="92" height="22" uuid="ec1f4327-e38a-4473-a68e-cd7aeb23b25f"/>
+								<textElement textAlignment="Right">
+									<font fontName="Estandar-Regular" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement x="1" y="1" width="27" height="22" uuid="fa8c956e-4ad7-406e-b978-895582755bff"/>
+								<textElement textAlignment="Center">
+									<font fontName="Estandar-Regular" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
+							</textField>
+						</jr:listContents>
+					</jr:list>
+				</componentElement>
 			</frame>
 			<frame>
 				<reportElement positionType="Float" x="1" y="90" width="498" height="67" uuid="6ea4eb70-01f8-42e4-9533-77aa17261d04"/>
@@ -337,7 +346,7 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 								<textElement textAlignment="Left">
 									<font fontName="Estandar-Regular" size="9"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{descripcion} + ' '+ $F{descripcion_ctte}]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00">
 								<reportElement x="400" y="1" width="92" height="22" uuid="1dcf0c38-948e-4dad-be59-388aedf03b89"/>
@@ -462,40 +471,6 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["Nro Matricula:  " + $F{numeroMatricula}]]></textFieldExpression>
 				</textField>
-				<componentElement>
-					<reportElement positionType="Float" x="1" y="0" width="492" height="23" uuid="11e8a9ef-644e-4482-a9f4-94cc625f1258"/>
-					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-						<datasetRun subDataset="ds_recibo_items" uuid="0b57ba6b-d960-47bd-98cc-8ab796994a19">
-							<datasetParameter name="recibo_id">
-								<datasetParameterExpression><![CDATA[$F{id_recibo}]]></datasetParameterExpression>
-							</datasetParameter>
-							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-						</datasetRun>
-						<jr:listContents height="23" width="492">
-							<textField>
-								<reportElement x="29" y="1" width="371" height="22" uuid="fb62327a-dc91-4865-8533-ea89a2e118c7"/>
-								<textElement textAlignment="Left">
-									<font fontName="Estandar-Regular" size="9"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
-							</textField>
-							<textField pattern="###0.00;-###0.00">
-								<reportElement x="400" y="1" width="92" height="22" uuid="7a526b5f-eed5-48cb-8348-1ef4d87d98cb"/>
-								<textElement textAlignment="Right">
-									<font fontName="Estandar-Regular" size="9"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
-							</textField>
-							<textField>
-								<reportElement x="1" y="1" width="27" height="22" uuid="7524a34c-0327-42b0-908e-35e992c1bfa1"/>
-								<textElement textAlignment="Center">
-									<font fontName="Estandar-Regular" size="9"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
-							</textField>
-						</jr:listContents>
-					</jr:list>
-				</componentElement>
 				<textField>
 					<reportElement x="209" y="-93" width="107" height="19" uuid="44b3460d-0e74-44f1-ac41-862f911729f5"/>
 					<textElement verticalAlignment="Middle">
@@ -539,6 +514,40 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 					</textElement>
 					<textFieldExpression><![CDATA["DETALLE DEL PAGO"]]></textFieldExpression>
 				</textField>
+				<componentElement>
+					<reportElement positionType="Float" x="1" y="0" width="492" height="23" uuid="05dc6772-9689-4693-a3be-a399454830c3"/>
+					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+						<datasetRun subDataset="ds_recibo_items" uuid="c54291f2-b8ae-47a0-b430-0e338105515f">
+							<datasetParameter name="recibo_id">
+								<datasetParameterExpression><![CDATA[$F{id_recibo}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:listContents height="23" width="492">
+							<textField>
+								<reportElement x="29" y="1" width="371" height="22" uuid="4cc73a1d-93ef-4661-91e2-d62fa7825816"/>
+								<textElement textAlignment="Left">
+									<font fontName="Estandar-Regular" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{descripcion} + ' '+ $F{descripcion_ctte}]]></textFieldExpression>
+							</textField>
+							<textField pattern="###0.00;-###0.00">
+								<reportElement x="400" y="1" width="92" height="22" uuid="1a2d7d81-2a8d-4d74-b389-4d898f6570a7"/>
+								<textElement textAlignment="Right">
+									<font fontName="Estandar-Regular" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+							</textField>
+							<textField>
+								<reportElement x="1" y="1" width="27" height="22" uuid="54360bde-cb61-42a2-aff3-3e20a4793403"/>
+								<textElement textAlignment="Center">
+									<font fontName="Estandar-Regular" size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
+							</textField>
+						</jr:listContents>
+					</jr:list>
+				</componentElement>
 			</frame>
 		</band>
 	</detail>
