@@ -13,7 +13,7 @@
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="651"/>
 	<subDataset name="ds_volante_items" uuid="83cac93a-18c8-4ea5-893b-f72cf4127761">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn_prueba"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="145"/>
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="845"/>
 		<parameter name="volante_id" class="java.lang.Integer"/>
@@ -77,7 +77,11 @@ group by p.cuit, p.nombre]]>
 	<parameter name="volante_id" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select v.id as id_volante, v.id as numero, to_char(v.fecha, 'DD/MM/YYYY')  as fecha_emision, to_char(v.fecha_vencimiento, 'DD/MM/YYYY') as fecha_vto, m."numeroMatricula",  v.subtotal, v.interes_total, v.importe_total,
-COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' as direccion,
+case when (edom.tipo = 'legal') then COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' 
+else 
+     (case when (edom.tipo='real') then COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' 
+     else '' end)
+end as direccion,
 case when (p.id is not null) then 'Nombre y Apellido: ' || p.nombre || ' ' || p.apellido 
      else 'Razon Social ' || emp.nombre
      end as nombre
@@ -89,7 +93,7 @@ left join empresa emp on (m.entidad=emp.id)
 left join entidad_domicilio edom on (edom.entidad=m.entidad)
 left join domicilio dom on (dom.id= edom.domicilio)
 left join localidad l on (dom.localidad=l.id)
-where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
+where  v.id = 335]]>
 	</queryString>
 	<field name="id_volante" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="id_volante"/>
@@ -127,7 +131,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 	<detail>
 		<band height="582" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="-17" width="498" height="196" uuid="4def0e05-4c1b-4279-aaf9-7bacca0096bb"/>
+				<reportElement positionType="Float" x="0" y="-17" width="498" height="196" uuid="4def0e05-4c1b-4279-aaf9-7bacca0096bb"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
@@ -187,7 +191,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<textFieldExpression><![CDATA["Fecha de Vto: " + $F{fecha_vto}]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement x="0" y="120" width="492" height="30" uuid="c4a8e024-30de-4427-9430-6ecc5e49ea73"/>
+					<reportElement positionType="Float" x="0" y="120" width="492" height="30" uuid="c4a8e024-30de-4427-9430-6ecc5e49ea73"/>
 					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 						<datasetRun subDataset="ds_volante_items" uuid="58e9d0cc-aad5-418b-8c5b-873bde09e359">
 							<datasetParameter name="volante_id">
@@ -201,7 +205,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 								<textElement>
 									<font fontName="extandart"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte} ]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte}]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00">
 								<reportElement x="354" y="2" width="74" height="12" uuid="3105b03d-f425-4a96-8a76-59ad333a01f5"/>
@@ -251,9 +255,6 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
 				</textField>
-				<line>
-					<reportElement positionType="Float" x="319" y="148" width="170" height="1" uuid="5344ea4b-3074-4006-bd18-fafd9089f4ea"/>
-				</line>
 				<textField>
 					<reportElement positionType="Float" x="396" y="166" width="92" height="14" uuid="062f6b3d-2f70-4333-bf4b-e7b38416f487"/>
 					<textElement textAlignment="Right">
@@ -269,12 +270,12 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<textFieldExpression><![CDATA["Total      $"+ $F{importe_total}]]></textFieldExpression>
 				</textField>
 				<frame>
-					<reportElement x="0" y="199" width="498" height="196" uuid="02f45601-900e-423c-b42a-d9531c8b5e02"/>
+					<reportElement positionType="Float" x="0" y="199" width="498" height="196" uuid="02f45601-900e-423c-b42a-d9531c8b5e02"/>
 					<box>
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</box>
 					<staticText>
-						<reportElement x="0" y="0" width="498" height="100" uuid="d10c708c-a9f7-4897-a45c-08b979d09a36"/>
+						<reportElement positionType="Float" x="0" y="0" width="498" height="100" uuid="d10c708c-a9f7-4897-a45c-08b979d09a36"/>
 						<box>
 							<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 							<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -287,70 +288,70 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						<text><![CDATA[]]></text>
 					</staticText>
 					<line>
-						<reportElement x="318" y="1" width="1" height="99" uuid="28ffa803-5660-4bbc-b8ea-02c1de525c92"/>
+						<reportElement positionType="Float" x="318" y="1" width="1" height="99" uuid="28ffa803-5660-4bbc-b8ea-02c1de525c92"/>
 					</line>
 					<image>
-						<reportElement x="10" y="1" width="160" height="37" uuid="723ddf0a-d8f4-42a7-9ed0-eea5876f2841"/>
+						<reportElement positionType="Float" x="10" y="1" width="160" height="37" uuid="723ddf0a-d8f4-42a7-9ed0-eea5876f2841"/>
 						<imageExpression><![CDATA["resources/encabezado_boleta.png"]]></imageExpression>
 					</image>
 					<textField>
-						<reportElement x="330" y="29" width="161" height="18" uuid="7b63d55e-c6ae-4152-aa7b-a6266a5c33c5"/>
+						<reportElement positionType="Float" x="330" y="29" width="161" height="18" uuid="7b63d55e-c6ae-4152-aa7b-a6266a5c33c5"/>
 						<textElement verticalAlignment="Middle">
 							<font fontName="Estandar-Regular"/>
 						</textElement>
 						<textFieldExpression><![CDATA["Fecha de Emision: " + $F{fecha_emision}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="10" y="58" width="308" height="20" uuid="eb53b6a2-8fc1-4a0f-bd8b-9d97d4f1f501"/>
+						<reportElement positionType="Float" x="10" y="58" width="308" height="20" uuid="eb53b6a2-8fc1-4a0f-bd8b-9d97d4f1f501"/>
 						<textElement textAlignment="Left" verticalAlignment="Middle">
 							<font fontName="Estandar-Regular"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="10" y="79" width="308" height="20" uuid="28d5d2bf-6a43-48f9-aee1-0417cf11530d"/>
+						<reportElement positionType="Float" x="10" y="79" width="308" height="20" uuid="28d5d2bf-6a43-48f9-aee1-0417cf11530d"/>
 						<textElement>
 							<font fontName="Estandar-Regular"/>
 						</textElement>
 						<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="10" y="38" width="180" height="19" uuid="b244282a-0bf3-4f83-98d8-d26ad9465fdd"/>
+						<reportElement positionType="Float" x="10" y="38" width="180" height="19" uuid="b244282a-0bf3-4f83-98d8-d26ad9465fdd"/>
 						<textElement verticalAlignment="Middle">
 							<font fontName="klavica" size="10"/>
 						</textElement>
 						<textFieldExpression><![CDATA["Nro Matricula:  " + $F{numeroMatricula}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="330" y="48" width="161" height="20" uuid="a7c92a5c-0d3d-464c-b967-5573b0b77eed"/>
+						<reportElement positionType="Float" x="330" y="48" width="161" height="20" uuid="a7c92a5c-0d3d-464c-b967-5573b0b77eed"/>
 						<textElement verticalAlignment="Middle">
 							<font fontName="Estandar-Regular"/>
 						</textElement>
 						<textFieldExpression><![CDATA["Fecha de Vto: " + $F{fecha_vto}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="210" y="10" width="107" height="19" uuid="3be96fba-55c8-4a34-a629-b53334604442"/>
+						<reportElement positionType="Float" x="210" y="10" width="107" height="19" uuid="3be96fba-55c8-4a34-a629-b53334604442"/>
 						<textElement verticalAlignment="Middle">
 							<font fontName="klavica" size="10"/>
 						</textElement>
 						<textFieldExpression><![CDATA["VOLANTE N°  " + $F{numero}]]></textFieldExpression>
 					</textField>
 					<staticText>
-						<reportElement x="9" y="100" width="58" height="18" uuid="d82edec6-4251-46ef-8a32-24ed1048baa6"/>
+						<reportElement positionType="Float" x="9" y="100" width="58" height="18" uuid="d82edec6-4251-46ef-8a32-24ed1048baa6"/>
 						<textElement verticalAlignment="Bottom">
 							<font fontName="Estandar-Regular" size="11"/>
 						</textElement>
 						<text><![CDATA[Detalle]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="355" y="100" width="74" height="18" uuid="aabfd1b5-63b6-4de6-a52a-78ebb89d44b8"/>
+						<reportElement positionType="Float" x="355" y="100" width="74" height="18" uuid="aabfd1b5-63b6-4de6-a52a-78ebb89d44b8"/>
 						<textElement textAlignment="Right" verticalAlignment="Bottom">
 							<font fontName="Estandar-Regular" size="11"/>
 						</textElement>
 						<text><![CDATA[Importe]]></text>
 					</staticText>
 					<staticText>
-						<reportElement x="447" y="99" width="44" height="18" uuid="a7920507-c054-4f5c-a25b-11e485f0f128"/>
+						<reportElement positionType="Float" x="447" y="99" width="44" height="18" uuid="a7920507-c054-4f5c-a25b-11e485f0f128"/>
 						<textElement textAlignment="Right" verticalAlignment="Bottom">
 							<font fontName="Estandar-Regular" size="11"/>
 						</textElement>
@@ -367,7 +368,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						<textFieldExpression><![CDATA["Total      $"+ $F{importe_total}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="331" y="151" width="60" height="14" uuid="0dfa37bc-2ff3-41b6-9898-5baffb09eb40"/>
+						<reportElement positionType="Float" x="331" y="151" width="60" height="14" uuid="0dfa37bc-2ff3-41b6-9898-5baffb09eb40"/>
 						<textFieldExpression><![CDATA["SubTotal"]]></textFieldExpression>
 					</textField>
 					<textField>
@@ -376,7 +377,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						<textFieldExpression><![CDATA[$F{subtotal}]]></textFieldExpression>
 					</textField>
 					<textField>
-						<reportElement x="331" y="167" width="60" height="14" uuid="69e65ce8-4fdd-45a4-9623-596f63e7fb55"/>
+						<reportElement positionType="Float" x="331" y="167" width="60" height="14" uuid="69e65ce8-4fdd-45a4-9623-596f63e7fb55"/>
 						<textFieldExpression><![CDATA["Interés"]]></textFieldExpression>
 					</textField>
 					<textField>
@@ -387,7 +388,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 						<textFieldExpression><![CDATA[$F{interes_total}]]></textFieldExpression>
 					</textField>
 					<componentElement>
-						<reportElement x="0" y="120" width="492" height="30" uuid="e689b1d7-00e7-404b-8146-df9de619b1bb"/>
+						<reportElement positionType="Float" x="0" y="120" width="492" height="30" uuid="e689b1d7-00e7-404b-8146-df9de619b1bb"/>
 						<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 							<datasetRun subDataset="ds_volante_items" uuid="99021363-555b-434d-a3fd-35f66ec1cadf">
 								<datasetParameter name="volante_id">
@@ -401,7 +402,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 									<textElement>
 										<font fontName="extandart"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte} ]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte}]]></textFieldExpression>
 								</textField>
 								<textField pattern="###0.00;-###0.00">
 									<reportElement x="354" y="2" width="74" height="12" uuid="69eeb9d7-1b2e-4afc-91bd-5862a39182de"/>
@@ -420,21 +421,21 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					</componentElement>
 				</frame>
 				<textField>
-					<reportElement x="330" y="151" width="60" height="14" uuid="2edd9264-dbf3-4951-97d3-9ea0e74814fb"/>
+					<reportElement positionType="Float" x="330" y="151" width="60" height="14" uuid="2edd9264-dbf3-4951-97d3-9ea0e74814fb"/>
 					<textFieldExpression><![CDATA["SubTotal"]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="331" y="167" width="60" height="14" uuid="39876451-625f-40b9-b09d-7672213b54b1"/>
+					<reportElement positionType="Float" x="331" y="167" width="60" height="14" uuid="39876451-625f-40b9-b09d-7672213b54b1"/>
 					<textFieldExpression><![CDATA["Interés"]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>
-				<reportElement x="0" y="386" width="498" height="196" uuid="6e302f0a-d42a-4832-b901-39c1d8e705bc"/>
+				<reportElement positionType="Float" x="0" y="386" width="498" height="196" uuid="6e302f0a-d42a-4832-b901-39c1d8e705bc"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</box>
 				<staticText>
-					<reportElement x="0" y="0" width="498" height="100" uuid="accc955a-6fb9-4800-8ba9-7131fe5b7e6a"/>
+					<reportElement positionType="Float" x="0" y="0" width="498" height="100" uuid="accc955a-6fb9-4800-8ba9-7131fe5b7e6a"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -447,70 +448,70 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<text><![CDATA[]]></text>
 				</staticText>
 				<line>
-					<reportElement x="318" y="1" width="1" height="99" uuid="98e0f668-9382-4117-9318-00248a27c081"/>
+					<reportElement positionType="Float" x="318" y="1" width="1" height="99" uuid="98e0f668-9382-4117-9318-00248a27c081"/>
 				</line>
 				<image>
-					<reportElement x="10" y="1" width="160" height="37" uuid="5c66cb88-fae7-4ae5-84af-9fdb8c5a80ab"/>
+					<reportElement positionType="Float" x="10" y="1" width="160" height="37" uuid="5c66cb88-fae7-4ae5-84af-9fdb8c5a80ab"/>
 					<imageExpression><![CDATA["resources/encabezado_boleta.png"]]></imageExpression>
 				</image>
 				<textField>
-					<reportElement x="330" y="29" width="161" height="18" uuid="ace27110-e7c0-42bf-a8aa-db1e4785d53e"/>
+					<reportElement positionType="Float" x="330" y="29" width="161" height="18" uuid="ace27110-e7c0-42bf-a8aa-db1e4785d53e"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Estandar-Regular"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Fecha de Emision: " + $F{fecha_emision}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="10" y="58" width="308" height="20" uuid="d3e207ae-241b-430f-a37e-bda0f541f692"/>
+					<reportElement positionType="Float" x="10" y="58" width="308" height="20" uuid="d3e207ae-241b-430f-a37e-bda0f541f692"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Estandar-Regular"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="10" y="79" width="308" height="20" uuid="14ba6a7f-98c6-4024-b161-035483c52f0c"/>
+					<reportElement positionType="Float" x="10" y="79" width="308" height="20" uuid="14ba6a7f-98c6-4024-b161-035483c52f0c"/>
 					<textElement>
 						<font fontName="Estandar-Regular"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="10" y="38" width="180" height="19" uuid="85f9545f-dcd6-4be0-8ced-86d4d6637163"/>
+					<reportElement positionType="Float" x="10" y="38" width="180" height="19" uuid="85f9545f-dcd6-4be0-8ced-86d4d6637163"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="klavica" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Nro Matricula:  " + $F{numeroMatricula}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="330" y="48" width="161" height="20" uuid="c4909bf3-29bf-4ba5-a708-e1c7e5672746"/>
+					<reportElement positionType="Float" x="330" y="48" width="161" height="20" uuid="c4909bf3-29bf-4ba5-a708-e1c7e5672746"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Estandar-Regular"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Fecha de Vto: " + $F{fecha_vto}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="210" y="10" width="107" height="19" uuid="a6cbc8ed-1473-4622-8ffe-e277ffc6433f"/>
+					<reportElement positionType="Float" x="210" y="10" width="107" height="19" uuid="a6cbc8ed-1473-4622-8ffe-e277ffc6433f"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="klavica" size="10"/>
 					</textElement>
 					<textFieldExpression><![CDATA["VOLANTE N°  " + $F{numero}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="9" y="100" width="58" height="18" uuid="716b438a-4662-4db0-9fcb-d733de97030f"/>
+					<reportElement positionType="Float" x="9" y="100" width="58" height="18" uuid="716b438a-4662-4db0-9fcb-d733de97030f"/>
 					<textElement verticalAlignment="Bottom">
 						<font fontName="Estandar-Regular" size="11"/>
 					</textElement>
 					<text><![CDATA[Detalle]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="355" y="100" width="74" height="18" uuid="d85cb069-6f9c-4d10-a9b2-554265f60044"/>
+					<reportElement positionType="Float" x="355" y="100" width="74" height="18" uuid="d85cb069-6f9c-4d10-a9b2-554265f60044"/>
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font fontName="Estandar-Regular" size="11"/>
 					</textElement>
 					<text><![CDATA[Importe]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="447" y="99" width="44" height="18" uuid="cede0743-8007-4ba6-b081-f2f53dc603e2"/>
+					<reportElement positionType="Float" x="447" y="99" width="44" height="18" uuid="cede0743-8007-4ba6-b081-f2f53dc603e2"/>
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font fontName="Estandar-Regular" size="11"/>
 					</textElement>
@@ -527,7 +528,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<textFieldExpression><![CDATA["Total      $"+ $F{importe_total}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="331" y="167" width="60" height="14" uuid="a240ab74-6985-4572-a227-1a9593bf4941"/>
+					<reportElement positionType="Float" x="331" y="167" width="60" height="14" uuid="a240ab74-6985-4572-a227-1a9593bf4941"/>
 					<textFieldExpression><![CDATA["Interés"]]></textFieldExpression>
 				</textField>
 				<textField>
@@ -543,11 +544,11 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 					<textFieldExpression><![CDATA[$F{interes_total}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="331" y="151" width="60" height="14" uuid="2ddd7b5a-ad1e-45d3-8c4e-dcfff42e1dab"/>
+					<reportElement positionType="Float" x="331" y="151" width="60" height="14" uuid="2ddd7b5a-ad1e-45d3-8c4e-dcfff42e1dab"/>
 					<textFieldExpression><![CDATA["SubTotal"]]></textFieldExpression>
 				</textField>
 				<componentElement>
-					<reportElement x="0" y="120" width="492" height="30" uuid="ee998338-d070-4c66-85b6-6018e7efc3b9"/>
+					<reportElement positionType="Float" x="0" y="120" width="492" height="30" uuid="ee998338-d070-4c66-85b6-6018e7efc3b9"/>
 					<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 						<datasetRun subDataset="ds_volante_items" uuid="4cff2ed8-a32a-420a-b898-7e5505bc4f30">
 							<datasetParameter name="volante_id">
@@ -561,7 +562,7 @@ where edom.tipo='real' and v.id = cast( $P{volante_id} as INTEGER)]]>
 								<textElement>
 									<font fontName="extandart"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte} ]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{descripcion}+ " " +$F{descripcion_ctte}]]></textFieldExpression>
 							</textField>
 							<textField pattern="###0.00;-###0.00">
 								<reportElement x="354" y="2" width="74" height="12" uuid="b02479a7-7c57-41c1-b6d0-deb050d5793e"/>

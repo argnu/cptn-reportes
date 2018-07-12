@@ -80,7 +80,11 @@ where comprobante= $P{recibo_id}]]>
 	<parameter name="recibo_id" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select c.id as id_recibo, c.numero as numero, to_char(c.fecha, 'DD/MM/YYYY')  as fecha_emision, to_char(c.fecha_vencimiento, 'DD/MM/YYYY') as fecha_vto, m."numeroMatricula",  c.subtotal, c.interes_total, c.importe_total,
-COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' as direccion,
+case when (edom.tipo = 'legal') then COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' 
+else 
+     (case when (edom.tipo='real') then COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' 
+     else '' end)
+end as direccion,
 case when (p.id is not null) then 'Nombre y Apellido: ' || p.nombre || ' ' || p.apellido 
      else 'Razon Social ' || emp.nombre
      end as nombre
@@ -92,7 +96,7 @@ left join empresa emp on (m.entidad=emp.id)
 left join entidad_domicilio edom on (edom.entidad=m.entidad)
 left join domicilio dom on (dom.id= edom.domicilio)
 left join localidad l on (dom.localidad=l.id)
-where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
+where  c.id = cast( $P{recibo_id} as INTEGER)]]>
 	</queryString>
 	<field name="id_recibo" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="id_recibo"/>
@@ -128,7 +132,7 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="529" splitType="Stretch">
+		<band height="509" splitType="Stretch">
 			<frame>
 				<reportElement positionType="Float" x="1" y="262" width="498" height="67" uuid="aff6f6ac-c542-4f59-a6c2-b278d5ecd607"/>
 				<staticText>
@@ -160,7 +164,7 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 					<reportElement x="340" y="-102" width="1" height="101" uuid="18029617-4907-4f49-82f3-804b9f8be70d"/>
 				</line>
 				<image>
-					<reportElement x="9" y="-102" width="160" height="37" uuid="e8f316d9-f63b-4c92-94f8-fae080cf9c6b"/>
+					<reportElement positionType="Float" x="9" y="-102" width="160" height="37" uuid="e8f316d9-f63b-4c92-94f8-fae080cf9c6b"/>
 					<imageExpression><![CDATA["resources/encabezado_boleta.png"]]></imageExpression>
 				</image>
 				<textField>
@@ -440,7 +444,7 @@ where edom.tipo='real' and c.id = cast( $P{recibo_id} as INTEGER)]]>
 					<reportElement x="340" y="-102" width="1" height="101" uuid="9efaca46-e2ff-4e49-bf17-c8cc304146d5"/>
 				</line>
 				<image>
-					<reportElement x="9" y="-102" width="160" height="37" uuid="4b94183d-dc3e-4de3-82f5-d6b81037e989"/>
+					<reportElement positionType="Float" x="9" y="-102" width="160" height="37" uuid="4b94183d-dc3e-4de3-82f5-d6b81037e989"/>
 					<imageExpression><![CDATA["resources/encabezado_boleta.png"]]></imageExpression>
 				</image>
 				<textField>

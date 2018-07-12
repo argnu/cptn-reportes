@@ -46,7 +46,11 @@ order by bi.item]]>
 	<parameter name="boleta_id" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select b.id as id_boleta, b.numero, COALESCE(to_char(b.fecha, 'DD/MM/YYYY'), '')  as fecha_emision, to_char(b.fecha_vencimiento, 'DD/MM/YYYY') as fecha_vto, m."numeroMatricula", b.total,
-dom.direccion || '(' || l.nombre || ')' as direccion,
+case when (edom.tipo = 'legal') then COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' 
+else 
+     (case when (edom.tipo='real') then COALESCE(dom.direccion, '') || '(' || COALESCE(l.nombre, '') || ')' 
+     else '' end)
+end as direccion,
 case when (p.id is not null) then 'Nombre y Apellido: ' || p.nombre || ' ' || p.apellido 
      else 'Razon Social ' || emp.nombre
      end as nombre
@@ -58,7 +62,7 @@ left join empresa emp on (m.entidad=emp.id)
 left join entidad_domicilio edom on (edom.entidad=m.entidad)
 left join domicilio dom on (dom.id= edom.domicilio)
 left join localidad l on (dom.localidad=l.id)
-where edom.tipo='real' and b.id = cast( $P{boleta_id} as INTEGER)]]>
+where b.id = cast( $P{boleta_id} as INTEGER)]]>
 	</queryString>
 	<field name="id_boleta" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="id_boleta"/>
@@ -206,7 +210,7 @@ where edom.tipo='real' and b.id = cast( $P{boleta_id} as INTEGER)]]>
 					<reportElement positionType="Float" x="0" y="120" width="498" height="64" uuid="d2e7a8f5-c4e7-489b-8d8d-ab4d6d278358"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="0" y="5" width="498" height="116" uuid="972fb152-53eb-4546-bc1f-c9764c048e89"/>
+					<reportElement positionType="Float" x="0" y="5" width="498" height="116" uuid="972fb152-53eb-4546-bc1f-c9764c048e89"/>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
