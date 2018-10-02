@@ -18,7 +18,7 @@
 		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="845"/>
 		<parameter name="volante_id" class="java.lang.Integer"/>
 		<queryString language="SQL">
-			<![CDATA[select 
+			<![CDATA[select
 case when (leg.id is not null and bi.descripcion not like '%Nomenclatura%') then 
 bi.descripcion || '-  Nomenclatura ' || coalesce (leg.nomenclatura, '') 
 else bi.descripcion end as descripcion,
@@ -35,7 +35,8 @@ left join persona_fisica pf on (pf.id=p.id)
 left join persona_juridica pj on (p.id= pj.id)
 inner join boleta_item bi on (bi.boleta=b.id)
 where vb.volante= $P{volante_id}
-group by leg.id, bi.descripcion, b.numero, bi.importe, vb.interes]]>
+group by leg.id, bi.descripcion, b.numero, bi.importe, vb.interes
+order by b.numero asc]]>
 		</queryString>
 		<field name="descripcion" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
@@ -93,7 +94,8 @@ left join empresa emp on (m.entidad=emp.id)
 left join entidad_domicilio edom on (edom.entidad=m.entidad)
 left join domicilio dom on (dom.id= edom.domicilio)
 left join localidad l on (dom.localidad=l.id)
-where  v.id = 335]]>
+where  v.id = cast( $P{volante_id} as INTEGER)
+limit (1)]]>
 	</queryString>
 	<field name="id_volante" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="id_volante"/>

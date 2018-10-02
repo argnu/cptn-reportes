@@ -1,2 +1,2 @@
 # cptn-reportes
-Reportes Jasper para el Colegio de Técnicos de la Provincia del Neuquén
+Reportes con Jasper Report para el Colegio de Técnicos de la Provincia del Neuquén

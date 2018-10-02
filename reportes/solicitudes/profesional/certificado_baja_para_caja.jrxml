@@ -23,7 +23,7 @@
 		<parameter name="id_matricula" class="java.lang.Integer"/>
 		<parameter name="solicitud_id" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[select  mm.created_at as fecha_movimiento, to_char(mm.created_at, 'DD/MM/YYYY') as fecha, tm.valor as descripcion, case when (d.numero is not null) then d.numero else '' end as numero_acta, case when (d.fecha>='2001-01-01') then to_char(d.fecha, 'DD/MM/YYYY')
+			<![CDATA[select  mm.created_at as fecha_movimiento, to_char(mm.created_at, 'DD/MM/YYYY') as fecha, tm.valor as descripcion, case when (d.numero is not null) then cast (d.numero, text)  else '' end as numero_acta, case when (d.fecha>='2001-01-01') then to_char(d.fecha, 'DD/MM/YYYY')
 Else '' end as fecha_acta
 from matricula_movimiento mm
 inner join t_movimiento_matricula tm on (mm.movimiento =tm.id)
@@ -425,15 +425,15 @@ Fecha:  15-01-2018
 					</datasetRun>
 					<jr:listContents height="30" width="495">
 						<textField>
-							<reportElement x="0" y="0" width="37" height="16" uuid="3378bc2d-53ee-4edb-8a82-9add174da99b"/>
+							<reportElement x="0" y="0" width="44" height="16" uuid="3378bc2d-53ee-4edb-8a82-9add174da99b"/>
 							<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="37" y="1" width="58" height="15" uuid="2944eb36-0163-41d1-8621-74fc53eaa5c1"/>
+							<reportElement x="44" y="1" width="58" height="15" uuid="2944eb36-0163-41d1-8621-74fc53eaa5c1"/>
 							<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="157" y="0" width="196" height="30" uuid="dc3fc51a-964e-43b0-b3f9-c3216a1f692b">
+							<reportElement x="159" y="0" width="196" height="30" uuid="dc3fc51a-964e-43b0-b3f9-c3216a1f692b">
 								<printWhenExpression><![CDATA[$F{ubicacion}.equals("null")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
 							</reportElement>
 							<textElement textAlignment="Justified">
@@ -449,7 +449,7 @@ Fecha:  15-01-2018
 							<textFieldExpression><![CDATA[$F{tarea}]]></textFieldExpression>
 						</textField>
 						<textField>
-							<reportElement x="96" y="1" width="58" height="15" uuid="98b51ca1-1dfe-4f36-89a6-73142f0ba914"/>
+							<reportElement x="101" y="1" width="58" height="15" uuid="98b51ca1-1dfe-4f36-89a6-73142f0ba914"/>
 							<textElement>
 								<font fontName="Estandar-Regular"/>
 							</textElement>

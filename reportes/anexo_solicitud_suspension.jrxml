@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="anexo_solicitud_suspension" pageWidth="595" pageHeight="842" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="matricula_id" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select "numeroMatricula"
+from public.matricula 
+WHERE id = cast( $P{matricula_id} as INTEGER)]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="0" width="497" height="62" uuid="2efacdb2-4084-4c02-9925-af4a025e87e6"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="181" y="2" width="130" height="18" uuid="e8176034-94c9-4a4f-b1cd-734d7d48a81d"/>
+				<textElement textAlignment="Center">
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[ANEXO I 
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="21" width="333" height="18" uuid="b737d58a-43da-4132-a602-02c38c11abaa"/>
+				<textElement textAlignment="Center">
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<text><![CDATA[Formulario de Solicitud de Suspensión de Matrícula]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="564" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="1" width="484" height="479" uuid="bb2273c1-c5a8-4d51-a6e2-9601623ffbf1"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="11"/>
+				</textElement>
+				<text><![CDATA[Artículo 3° LEY 2988: El ejercicio profesional implica: 
+a) La prestación de servicios, asesoramiento, estudio, dirección de anteproyectos y proyectos; dirección, conducción y representación técnica, administración, relevamientos de obras de arquitectura, estudios urbanísticos y planeamiento urbano, regional y rural. 
+b) La realización de estudios, informes, dictámenes, pericias, consultas, laudos, documentación técnica sobre asuntos específicos de la profesión, ante autoridades judiciales, administrativas y legislativas, o a requerimiento particular. 
+c) El desempeño de cargos, funciones, comisiones o empleos en empresas o reparticiones públicas o privadas, en forma permanente u ocasional. 
+d) La dedicación a la investigación, experimentación, ensayos, divulgación técnica o científica y crítica. 
+e) El ejercicio de la docencia, en cualquiera de los niveles de enseñanza. El debe ajustarse a la legislación vigente para ejercer la docencia, excepto en lo relativo a la ética profesional y cuando sea exigible el título de técnico para ocupar el cargo docente. Este debe estar matriculado en el Colegio de Técnicos.
+
+Articulo 4° LEY 2988: El ejercicio profesional queda sujeto a las siguientes condiciones: 
+a) Debe realizarse por la prestación personal de servicios. Queda prohibida la mera prestación del título o firma profesional. 
+b) Implica, sin excepción, la actuación personal. Queda prohibida la cesión del uso del título o firma del técnico.
+ c) Debe enunciarse con precisión el título habilitante; se debe excluir toda posibilidad de error o duda al respecto. Considérese uso del título, el empleo de términos, leyendas, insignias, emblemas, dibujos y demás expresiones de las que pueda inferirse la idea de ejercicio profesional en forma inequívoca.
+
+Artículo 48° LEY 2988: Las transgresiones son pasibles de las siguientes sanciones: 
+a) Advertencia privada por escrito. 
+b) Amonestación privada por escrito. 
+c) Multa en efectivo. 
+d) Reprobación pública. 
+e) Suspensión de la matrícula. 
+f) Cancelación de la matrícula.
+Declaro haber leído y comprendido los Artículos No 3, 4 y 48 de la Ley Provincial No 2988, transcriptos precedentemente.
+]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="29" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="19" y="5" width="107" height="21" uuid="4893921d-1cfa-4090-a100-4b816e228cd9"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Firma y Aclaración:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="131" y="13" width="290" height="1" uuid="eb42e03b-c244-4304-be97-35f98ff1d3f4"/>
+			</line>
+			<staticText>
+				<reportElement x="20" y="29" width="77" height="21" uuid="703b65ef-c2a1-4ad3-8483-c895bcd5eeac"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<text><![CDATA[Lugar y Fecha:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="132" y="37" width="290" height="1" uuid="1c49e7f3-b279-412a-ac5f-9d2a8983b0b4"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

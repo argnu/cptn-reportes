@@ -62,7 +62,8 @@ left join empresa emp on (m.entidad=emp.id)
 left join entidad_domicilio edom on (edom.entidad=m.entidad)
 left join domicilio dom on (dom.id= edom.domicilio)
 left join localidad l on (dom.localidad=l.id)
-where b.id = cast( $P{boleta_id} as INTEGER)]]>
+where b.id = cast( $P{boleta_id} as INTEGER)
+limit(1)]]>
 	</queryString>
 	<field name="id_boleta" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="id_boleta"/>

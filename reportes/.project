@@ -32,16 +32,6 @@
 			<location>/home/nhuenchuman/JaspersoftWorkspace/MyReports/boletas_impresion.jrxml</location>
 		</link>
 		<link>
-			<name>certificado_baja_para_caja.jasper</name>
-			<type>1</type>
-			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/solicitudes/profesional/certificado_baja_para_caja.jasper</location>
-		</link>
-		<link>
-			<name>certificado_baja_para_caja.jrxml</name>
-			<type>1</type>
-			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/solicitudes/profesional/certificado_baja_para_caja.jrxml</location>
-		</link>
-		<link>
 			<name>certificado_baja_para_caja_6.jasper</name>
 			<type>1</type>
 			<location>/media/nhuenchuman/114E6F8040CA9C35/reportes_CPTN/certificado_baja_para_caja.jasper</location>
@@ -62,9 +52,19 @@
 			<location>/media/nhuenchuman/114E6F8040CA9C35/reportes_CPTN/certificado_baja_para_caja.jrxml</location>
 		</link>
 		<link>
+			<name>certificado_matricula.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/matriculas/certificado_matricula.jrxml</location>
+		</link>
+		<link>
 			<name>recibo.jasper</name>
 			<type>1</type>
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/recibo.jasper</location>
+		</link>
+		<link>
+			<name>recibo.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/recibo.jrxml</location>
 		</link>
 		<link>
 			<name>solicitud_suspension_voluntad.jasper</name>
@@ -72,9 +72,19 @@
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/solicitud_suspension_voluntad.jasper</location>
 		</link>
 		<link>
+			<name>solicitud_suspension_voluntad.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/solicitud_suspension_voluntad.jrxml</location>
+		</link>
+		<link>
 			<name>solicitud_suspension_voluntad_1.jasper</name>
 			<type>1</type>
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/solicitud_suspension_voluntad.jasper</location>
+		</link>
+		<link>
+			<name>solicitud_suspension_voluntad_1.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/solicitud_suspension_voluntad.jrxml</location>
 		</link>
 	</linkedResources>
 </projectDescription>
