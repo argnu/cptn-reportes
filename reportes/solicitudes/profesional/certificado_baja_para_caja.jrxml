@@ -23,7 +23,7 @@
 		<parameter name="id_matricula" class="java.lang.Integer"/>
 		<parameter name="solicitud_id" class="java.lang.String"/>
 		<queryString language="SQL">
-			<![CDATA[select  mm.created_at as fecha_movimiento, to_char(mm.created_at, 'DD/MM/YYYY') as fecha, tm.valor as descripcion, case when (d.numero is not null) then cast (d.numero, text)  else '' end as numero_acta, case when (d.fecha>='2001-01-01') then to_char(d.fecha, 'DD/MM/YYYY')
+			<![CDATA[select  mm.created_at as fecha_movimiento, to_char(mm.created_at, 'DD/MM/YYYY') as fecha, tm.valor as descripcion, case when (d.numero is not null) then cast (d.numero AS text)  else '' end as numero_acta, case when (d.fecha>='2001-01-01') then to_char(d.fecha, 'DD/MM/YYYY')
 Else '' end as fecha_acta
 from matricula_movimiento mm
 inner join t_movimiento_matricula tm on (mm.movimiento =tm.id)
@@ -219,7 +219,7 @@ GROUP BY s.entidad, s.fecha, s.numero, p.nombre, p.apellido, p.dni, p.id, m.id, 
 				<textFieldExpression><![CDATA["Entre la fecha " + $F{fecha_resolucion} + " hasta la fecha " + $F{fecha_solicitud} + " el profesional no ha presentado trabajos a intervención de éste Colegio en el libre ejercicio de su profesión. "]]></textFieldExpression>
 			</textField>
 			<componentElement>
-				<reportElement stretchType="ContainerBottom" x="1" y="277" width="496" height="19" uuid="6a5d5189-698d-43f2-80c2-f8fee91bf937"/>
+				<reportElement positionType="Float" stretchType="ContainerBottom" x="1" y="277" width="496" height="19" uuid="6a5d5189-698d-43f2-80c2-f8fee91bf937"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="ds_movimientos_matricula" uuid="2bc1673a-c9f3-4eb7-a1f8-bec8ce9b6cd8">
 						<datasetParameter name="id_matricula">
@@ -269,35 +269,35 @@ GROUP BY s.entidad, s.fecha, s.numero, p.nombre, p.apellido, p.dni, p.id, m.id, 
 				</jr:list>
 			</componentElement>
 			<staticText>
-				<reportElement x="22" y="233" width="170" height="20" uuid="25e92f84-bd42-48c7-b24a-4122178cd2e1"/>
+				<reportElement positionType="Float" x="22" y="233" width="170" height="20" uuid="25e92f84-bd42-48c7-b24a-4122178cd2e1"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="11"/>
 				</textElement>
 				<text><![CDATA[Movimientos de Matrícula]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="14" y="257" width="49" height="17" uuid="564e0d2a-e5e2-42c4-bff2-caa56c025021"/>
+				<reportElement positionType="Float" x="14" y="257" width="49" height="17" uuid="564e0d2a-e5e2-42c4-bff2-caa56c025021"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="85" y="257" width="70" height="17" uuid="e5e042c0-b119-4501-b7d0-e38e1e577190"/>
+				<reportElement positionType="Float" x="85" y="257" width="70" height="17" uuid="e5e042c0-b119-4501-b7d0-e38e1e577190"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Descripción]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="296" y="258" width="84" height="17" uuid="bff3839b-b382-4890-9331-323ff764cde3"/>
+				<reportElement positionType="Float" x="296" y="258" width="84" height="17" uuid="bff3839b-b382-4890-9331-323ff764cde3"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>
 				<text><![CDATA[Fecha de Acta]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="388" y="258" width="82" height="17" uuid="80897382-3dbb-403d-95e7-ef63e8d5678f"/>
+				<reportElement positionType="Float" x="388" y="258" width="82" height="17" uuid="80897382-3dbb-403d-95e7-ef63e8d5678f"/>
 				<textElement>
 					<font fontName="Estandar-Regular" size="10"/>
 				</textElement>

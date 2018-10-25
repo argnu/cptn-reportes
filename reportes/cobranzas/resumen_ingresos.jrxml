@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumen_ingresos" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="745" leftMargin="69" rightMargin="28" topMargin="28" bottomMargin="28" uuid="c12206f2-0631-4406-8b42-d438385faae8">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Produccion"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="232"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="757"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Crosstab_CH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CG" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CT" mode="Opaque" backcolor="#BEC9D4">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="fecha_inicio" class="java.lang.String"/>
+	<parameter name="fecha_fin" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select t.abreviatura,t.descripcion as concepto,SUM(c.importe_total) as importe_total, d.nombre as delegacion
+from comprobante c
+inner join comprobante_item ci on (c.id = ci.comprobante )
+inner join boleta b on (ci.boleta=b.id)
+inner join t_comprobante t on (b.tipo_comprobante=t.id)
+inner join boleta_item bi on (bi.boleta = b.id)
+inner join matricula m on (m.id=c.matricula)
+left join profesional p on (p.id=m.entidad)
+left join empresa e on (e.id= m.entidad) 
+left join delegacion d on (d.id=c.delegacion)
+where (c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD'))
+group by t.abreviatura,t.descripcion, d.nombre]]>
+	</queryString>
+	<field name="abreviatura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="abreviatura"/>
+	</field>
+	<field name="concepto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="concepto"/>
+	</field>
+	<field name="importe_total" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="sum"/>
+	</field>
+	<field name="delegacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="delegacion"/>
+	</field>
+	<variable name="total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{importe_total}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="61" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" x="1" y="1" width="498" height="60" uuid="3d6e22c4-408a-47da-9b9b-26c57ed12d3c"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="44" splitType="Stretch">
+			<textField>
+				<reportElement x="40" y="15" width="478" height="20" uuid="57c0b819-4abb-41cb-94ef-3d5cd7e49028"/>
+				<textElement>
+					<font fontName="klavica"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Resumen de ingresos desde " +  $P{fecha_inicio}.substring(8,10)+"/"+ $P{fecha_inicio}.substring(5,7)+"/"+ $P{fecha_inicio}.substring(0,4)  + " hasta " + $P{fecha_fin}.substring(8,10)+"/"+ $P{fecha_fin}.substring(5,7)+"/"+ $P{fecha_fin}.substring(0,4)]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="293">
+			<crosstab>
+				<reportElement x="0" y="11" width="600" height="181" uuid="40735a2e-4786-40fb-8bd3-6df9d8209647">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+					<property name="com.jaspersoft.studio.crosstab.style.header" value="Crosstab_CH"/>
+					<property name="com.jaspersoft.studio.crosstab.style.group" value="Crosstab_CG"/>
+					<property name="com.jaspersoft.studio.crosstab.style.total" value="Crosstab_CT"/>
+					<property name="com.jaspersoft.studio.crosstab.style.detail" value="Crosstab_CD"/>
+				</reportElement>
+				<rowGroup name="abreviatura" width="20" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{abreviatura}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CH">
+							<textField>
+								<reportElement x="0" y="0" width="20" height="60" uuid="7634eeaf-bfbf-4a5e-ad52-80e8214c6ed7"/>
+								<textElement>
+									<font fontName="Estandar-Regular"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{abreviatura}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CT">
+							<staticText>
+								<reportElement x="0" y="0" width="160" height="20" uuid="094e5817-1198-418b-9e04-220a033ebc51"/>
+								<textElement>
+									<font fontName="Estandar-Regular"/>
+								</textElement>
+								<text><![CDATA[Total Delegación]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="concepto" width="140" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{concepto}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CH">
+							<textField>
+								<reportElement x="0" y="0" width="140" height="30" uuid="755ee771-e2ae-42f9-bb43-73bd788c9853"/>
+								<textElement>
+									<font fontName="Estandar-Regular"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{concepto}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CG"/>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="delegacion" height="30" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{delegacion}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents mode="Opaque" style="Crosstab_CH">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="30" uuid="5e995b5a-a838-4fe8-b97f-a4b96a9e6a07"/>
+								<textElement>
+									<font fontName="Estandar-Regular"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{delegacion}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents mode="Opaque" style="Crosstab_CT"/>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="importe_total_MEASURE" class="java.lang.Double" calculation="Sum">
+					<measureExpression><![CDATA[$F{importe_total}]]></measureExpression>
+				</measure>
+				<crosstabCell width="60" height="30">
+					<cellContents mode="Opaque" style="Crosstab_CD">
+						<textField pattern="###0.00;-###0.00">
+							<reportElement x="0" y="0" width="60" height="30" uuid="9f58b9f3-609e-4911-b0e6-3f2d13450ba5"/>
+							<textElement textAlignment="Right">
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{importe_total_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="70" height="30" columnTotalGroup="delegacion">
+					<cellContents mode="Opaque" style="Crosstab_CT"/>
+				</crosstabCell>
+				<crosstabCell width="60" height="20" rowTotalGroup="abreviatura">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField pattern="###0.00;-###0.00">
+							<reportElement x="0" y="0" width="60" height="20" uuid="8ae9c878-f1dd-4a3f-8b3f-41d943d9d2c9"/>
+							<textElement textAlignment="Right">
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{importe_total_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="70" height="20" rowTotalGroup="abreviatura" columnTotalGroup="delegacion">
+					<cellContents mode="Opaque" style="Crosstab_CT"/>
+				</crosstabCell>
+				<crosstabCell width="60" height="30" rowTotalGroup="concepto">
+					<cellContents mode="Opaque" style="Crosstab_CG"/>
+				</crosstabCell>
+				<crosstabCell width="70" height="30" rowTotalGroup="concepto" columnTotalGroup="delegacion">
+					<cellContents mode="Opaque" style="Crosstab_CT"/>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

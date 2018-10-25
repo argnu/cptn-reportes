@@ -8,17 +8,20 @@
 	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
 	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="232"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="757"/>
 	<subDataset name="ds_formas_pago" uuid="8c288425-3561-4730-a8d1-8f84c0c3698c">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="cptn_prueba"/>
 		<parameter name="fecha_in" class="java.lang.String"/>
 		<parameter name="fecha_f" class="java.lang.String"/>
+		<parameter name="deleg" class="java.lang.String"/>
 		<queryString language="SQL">
 			<![CDATA[SELECT tf.nombre, SUM(cp.importe) as total_pago
 from comprobante c
 inner join comprobante_pago cp on (c.id=cp.comprobante)
 inner join t_formapago tf on (cp.forma_pago=tf.id)
-where (c.fecha>=  to_date($P{fecha_in}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_f}, 'YYYY-MM-DD'))
+where ((c.fecha>=  to_date($P{fecha_in}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_f}, 'YYYY-MM-DD')) and (cast( $P{deleg} as INTEGER) = 0)) OR ((c.fecha>=  to_date($P{fecha_in}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_f}, 'YYYY-MM-DD')) and (cast( $P{deleg} as INTEGER) > 0) and c.delegacion=cast( $P{deleg} as INTEGER))
 GROUP BY tf.nombre]]>
 		</queryString>
 		<field name="nombre" class="java.lang.String">
@@ -37,20 +40,22 @@ GROUP BY tf.nombre]]>
 	<parameter name="fecha_inicio" class="java.lang.String"/>
 	<parameter name="fecha_fin" class="java.lang.String"/>
 	<parameter name="delegacion" class="java.lang.String"/>
-	<parameter name="nombre_delegacion" class="java.lang.String">
-		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
-	</parameter>
 	<queryString language="SQL">
-		<![CDATA[select c.numero, m."numeroMatricula", bi.descripcion, ci.importe,
-case when (p.id is not null) then (p.nombre || ' ' || p.apellido) else e.nombre end, to_char(c.fecha,'DD/MM/YYYY') as fecha, c.importe_total, ci.importe as importe_item
+		<![CDATA[select  c.numero, m."numeroMatricula", tf.nombre as forma_pago,
+case when (p.id is not null) then (p.nombre || ' ' || p.apellido) else e.nombre end, to_char(c.fecha,'DD/MM/YYYY') as fecha, c.importe_total as importe_total,
+case when (cast( $P{delegacion} as INTEGER) = 0) then ('') else d.nombre end as nombre_delegacion
 from comprobante c
 inner join comprobante_item ci on (c.id = ci.comprobante )
+inner join comprobante_pago cp on (cp.comprobante= c.id)
+inner join t_formapago tf on (tf.id= cp.forma_pago)
 inner join boleta b on (ci.boleta=b.id)
 inner join boleta_item bi on (bi.boleta = b.id)
 inner join matricula m on (m.id=c.matricula)
 left join profesional p on (p.id=m.entidad)
 left join empresa e on (e.id= m.entidad) 
-where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD')) and (cast( $P{delegacion} as INTEGER) = 0)) OR ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD')) and (cast( $P{delegacion} as INTEGER) > 0) and c.delegacion=cast( $P{delegacion} as INTEGER))]]>
+left join delegacion d on (d.id=c.delegacion)
+where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD')) and (cast( $P{delegacion} as INTEGER) = 0)) OR ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD')) and (cast( $P{delegacion} as INTEGER) > 0) and c.delegacion=cast( $P{delegacion} as INTEGER))
+group by d.id, c.numero, m."numeroMatricula",p.id,   tf.nombre, c.fecha, e.nombre, p.apellido, p.nombre, c.importe_total]]>
 	</queryString>
 	<field name="numero" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.label" value="numero"/>
@@ -58,11 +63,8 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 	<field name="numeroMatricula" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="numeroMatricula"/>
 	</field>
-	<field name="descripcion" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value="descripcion"/>
-	</field>
-	<field name="importe" class="java.lang.Double">
-		<property name="com.jaspersoft.studio.field.label" value="importe"/>
+	<field name="forma_pago" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="forma_pago"/>
 	</field>
 	<field name="nombre" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
@@ -73,68 +75,18 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 	<field name="importe_total" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.label" value="importe_total"/>
 	</field>
-	<field name="importe_item" class="java.lang.Double">
-		<property name="com.jaspersoft.studio.field.label" value="importe_item"/>
+	<field name="nombre_delegacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre_delegacion"/>
 	</field>
 	<sortField name="numero"/>
 	<variable name="total" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{importe_total}]]></variableExpression>
 	</variable>
-	<group name="grupo_comprobantes">
-		<groupExpression><![CDATA[$F{numero}]]></groupExpression>
-		<groupHeader>
-			<band height="21">
-				<textField>
-					<reportElement x="306" y="0" width="50" height="14" uuid="373db689-a3a1-489a-9f00-62789d2afd9b"/>
-					<textElement>
-						<font fontName="extandart" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="54" y="0" width="75" height="14" uuid="50837183-333f-494d-861b-11447cfc784d">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e2ce1d4-3043-47dc-a69c-1a97273cf832"/>
-					</reportElement>
-					<textElement>
-						<font fontName="extandart" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{numeroMatricula}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="133" y="0" width="158" height="15" uuid="3a73f028-e89e-4321-a205-58a42471cfdb">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bea9ba0c-e55b-448d-8b12-f1f4e3582763"/>
-					</reportElement>
-					<textElement>
-						<font fontName="extandart" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="0" y="0" width="51" height="14" uuid="6370497f-7b4d-402c-93ae-3f892309bfa5">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="499806b4-d142-41a9-acf4-b04c662439c0"/>
-					</reportElement>
-					<textElement>
-						<font fontName="extandart" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
-				</textField>
-				<textField pattern="###0.00;-###0.00">
-					<reportElement x="367" y="0" width="61" height="14" uuid="075b9546-da60-4328-960a-be210815854c">
-						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d35b0890-e099-4652-9d8c-e3d1d3fe95b9"/>
-					</reportElement>
-					<textElement textAlignment="Right">
-						<font fontName="extandart" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{importe_total}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="61" splitType="Stretch">
+		<band height="127" splitType="Stretch">
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
 				<reportElement positionType="FixRelativeToBottom" x="0" y="1" width="498" height="60" uuid="3d6e22c4-408a-47da-9b9b-26c57ed12d3c"/>
 				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
@@ -142,10 +94,11 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 		</band>
 	</title>
 	<columnHeader>
-		<band height="69" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<staticText>
-				<reportElement x="55" y="48" width="74" height="16" uuid="941bf54b-2196-4a6e-a591-a002ef2dad78">
+				<reportElement x="62" y="8" width="68" height="16" uuid="941bf54b-2196-4a6e-a591-a002ef2dad78">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e2ce1d4-3043-47dc-a69c-1a97273cf832"/>
+					<printWhenExpression><![CDATA[$F{importe_total}>0]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="klavica" isBold="true"/>
@@ -153,7 +106,7 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 				<text><![CDATA[Matrícula]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="134" y="48" width="100" height="16" uuid="5c92aa6c-21cb-4092-ae85-5c78960e8f5f">
+				<reportElement x="130" y="7" width="100" height="16" isRemoveLineWhenBlank="true" uuid="5c92aa6c-21cb-4092-ae85-5c78960e8f5f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bea9ba0c-e55b-448d-8b12-f1f4e3582763"/>
 				</reportElement>
 				<textElement>
@@ -162,8 +115,9 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 				<text><![CDATA[Nombre]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="48" width="46" height="16" uuid="012120ae-bad9-415f-9661-dd3a8e5076cd">
+				<reportElement x="0" y="8" width="46" height="16" isRemoveLineWhenBlank="true" uuid="012120ae-bad9-415f-9661-dd3a8e5076cd">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="499806b4-d142-41a9-acf4-b04c662439c0"/>
+					<printWhenExpression><![CDATA[$F{importe_total}>0]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="klavica" isBold="true"/>
@@ -171,16 +125,16 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 				<text><![CDATA[Fecha]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="367" y="47" width="61" height="16" uuid="dee14ba6-701a-40da-affa-4d62615b81da">
+				<reportElement x="356" y="7" width="49" height="16" uuid="dee14ba6-701a-40da-affa-4d62615b81da">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d35b0890-e099-4652-9d8c-e3d1d3fe95b9"/>
 				</reportElement>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font fontName="klavica" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Importe]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="307" y="47" width="47" height="15" uuid="3faa989c-a32a-4daf-8295-0b45ba63c9de">
+				<reportElement x="302" y="8" width="53" height="15" uuid="3faa989c-a32a-4daf-8295-0b45ba63c9de">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e2ce1d4-3043-47dc-a69c-1a97273cf832"/>
 				</reportElement>
 				<textElement>
@@ -189,94 +143,142 @@ where ((c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date
 				<text><![CDATA[Recibo]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="20" y="15" width="478" height="20" uuid="57c0b819-4abb-41cb-94ef-3d5cd7e49028"/>
+				<reportElement x="0" y="-48" width="478" height="20" uuid="57c0b819-4abb-41cb-94ef-3d5cd7e49028"/>
 				<textElement>
 					<font fontName="klavica"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Arqueo desde " +  $P{fecha_inicio}.substring(8,10)+"/"+ $P{fecha_inicio}.substring(5,7)+"/"+ $P{fecha_inicio}.substring(0,4)  + " hasta " + $P{fecha_fin}.substring(8,10)+"/"+ $P{fecha_fin}.substring(5,7)+"/"+ $P{fecha_fin}.substring(0,4) + "    " + $P{nombre_delegacion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Arqueo desde " +  $P{fecha_inicio}.substring(8,10)+"/"+ $P{fecha_inicio}.substring(5,7)+"/"+ $P{fecha_inicio}.substring(0,4)  + " hasta " + $P{fecha_fin}.substring(8,10)+"/"+ $P{fecha_fin}.substring(5,7)+"/"+ $P{fecha_fin}.substring(0,4) + "    " +$F{nombre_delegacion}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="410" y="8" width="88" height="16" uuid="a931303b-bd84-43b1-8b86-e6dee302f4b0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d35b0890-e099-4652-9d8c-e3d1d3fe95b9"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="klavica" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Forma de Pago]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="23">
+		<band height="22">
 			<textField>
-				<reportElement positionType="Float" x="0" y="0" width="297" height="16" uuid="280c6b27-0055-4778-8d76-9ba08c0c7c23">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="377bbb49-90bd-41d6-8bc7-fcc365e6a135"/>
+				<reportElement x="0" y="0" width="60" height="17" uuid="82cfb219-4606-481d-ac4e-6efa55858f5e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1a0ae7e5-fb67-41d0-bcdb-61106f6b84a9"/>
 				</reportElement>
 				<textElement>
-					<font fontName="extandart"/>
+					<font fontName="Estandar-Regular"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="304" y="1" width="63" height="15" uuid="1d07a19d-02b2-43f0-b843-ece2c27bfb6c">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5635fe46-fa4c-44f3-9eed-e222f20bdf07"/>
+				<reportElement x="62" y="1" width="68" height="16" uuid="ba62836d-fd3f-48f9-ad8a-2eefa5076efd">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ffeaecb6-84d2-43ea-b640-3224649e1097"/>
 				</reportElement>
 				<textElement>
-					<font fontName="extandart"/>
+					<font fontName="Estandar-Regular"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{importe_item}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{numeroMatricula}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="1" width="170" height="16" uuid="988631ba-3326-4551-a4f6-5b5d1bac0582">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ff33f92d-960b-47aa-912b-2575e8ccae76"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement x="357" y="1" width="49" height="16" uuid="6b8c1087-75c5-4685-9318-28d2e28cb544">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f9738391-bbaf-4508-b637-c721d3d99681"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{importe_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="414" y="2" width="84" height="15" uuid="0caae131-59ce-47f9-ab1b-d544c5e3a60c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="407d5cb9-212b-4613-b20a-96447c4ca449"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{forma_pago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="302" y="1" width="53" height="16" uuid="f2d14dee-aa87-4676-9f6b-99dcce347b1d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d5c9a2bf-4ff0-4018-afcd-c7ed65a0ce1c"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<lastPageFooter>
-		<band height="178">
-			<staticText>
-				<reportElement positionType="Float" x="0" y="34" width="100" height="19" uuid="440eed92-3d95-44ab-b9b4-9268df9bebff">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="bea9ba0c-e55b-448d-8b12-f1f4e3582763"/>
-				</reportElement>
-				<textElement>
-					<font fontName="klavica"/>
-				</textElement>
-				<text><![CDATA[Formas de pago]]></text>
-			</staticText>
-			<componentElement>
-				<reportElement positionType="Float" x="1" y="55" width="437" height="25" uuid="833e72cf-dfc0-4550-8333-b1ccf02617c1"/>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="ds_formas_pago" uuid="03f087f3-30cb-4b51-870d-3613d3a93248">
-						<datasetParameter name="fecha_f">
-							<datasetParameterExpression><![CDATA[$P{fecha_inicio}]]></datasetParameterExpression>
-						</datasetParameter>
-						<datasetParameter name="fecha_in">
-							<datasetParameterExpression><![CDATA[$P{fecha_inicio}]]></datasetParameterExpression>
-						</datasetParameter>
-						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					</datasetRun>
-					<jr:listContents height="25" width="437">
-						<textField>
-							<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="0" y="0" width="220" height="20" uuid="14cd0287-b983-4742-bd5a-05f7a35ffc96"/>
-							<textElement>
-								<font fontName="extandart"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
-						</textField>
-						<textField>
-							<reportElement positionType="Float" x="296" y="0" width="140" height="20" uuid="6bdf1c72-38cd-45ce-8b9f-db426221fa25"/>
-							<textElement>
-								<font fontName="extandart"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{total_pago}]]></textFieldExpression>
-						</textField>
-					</jr:listContents>
-				</jr:list>
-			</componentElement>
-			<textField>
-				<reportElement x="370" y="14" width="67" height="18" uuid="7915127e-dca7-46d2-9b82-19f6ba5e355d"/>
-				<textElement textAlignment="Right">
-					<font fontName="extandart"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+	<pageFooter>
+		<band height="16">
+			<textField evaluationTime="Report">
+				<reportElement x="438" y="2" width="51" height="12" uuid="0e8e3706-6e04-40f3-a06c-9dc023968378"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="0" y="12" width="181" height="21" uuid="75e284e2-4769-4c9f-a462-19ab5f596a7c"/>
+				<reportElement x="452" y="2" width="20" height="12" uuid="581b4040-b05f-4c7d-b44b-1b4aae90c03d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="136">
+			<line>
+				<reportElement x="1" y="4" width="497" height="1" uuid="eaf99d88-38cb-4554-adb8-ec7cc33e6785"/>
+			</line>
+			<textField>
+				<reportElement positionType="Float" x="0" y="21" width="100" height="18" uuid="75e284e2-4769-4c9f-a462-19ab5f596a7c"/>
 				<textElement>
 					<font fontName="extandart"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Total Ingresos"]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement x="1" y="5" width="497" height="1" uuid="eaf99d88-38cb-4554-adb8-ec7cc33e6785"/>
-			</line>
+			<textField pattern="###0.00;-###0.00">
+				<reportElement x="358" y="21" width="67" height="12" uuid="7915127e-dca7-46d2-9b82-19f6ba5e355d"/>
+				<textElement textAlignment="Right">
+					<font fontName="extandart"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="1" y="42" width="261" height="20" uuid="fa11c649-4382-4b60-bcea-d8a7787045bc"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="ds_formas_pago" uuid="3ab40a88-ac4d-42b9-a019-c25912197b31">
+						<datasetParameter name="fecha_in">
+							<datasetParameterExpression><![CDATA[$P{fecha_inicio}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="fecha_f">
+							<datasetParameterExpression><![CDATA[$P{fecha_fin}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="deleg">
+							<datasetParameterExpression><![CDATA[$P{delegacion}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="20" width="261">
+						<textField>
+							<reportElement x="0" y="0" width="150" height="20" uuid="046a3223-5029-4388-bc7c-c1cd377f373d"/>
+							<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+						</textField>
+						<textField pattern="###0.00;-###0.00">
+							<reportElement x="160" y="0" width="90" height="20" uuid="2c2b2917-d083-4c0f-bdde-4e793408395c"/>
+							<textElement textAlignment="Right"/>
+							<textFieldExpression><![CDATA[$F{total_pago}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
 		</band>
 	</lastPageFooter>
 </jasperReport>

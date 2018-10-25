@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="legajo_tecnico" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="497" leftMargin="70" rightMargin="28" topMargin="28" bottomMargin="28" uuid="4b51fc2b-4087-4e9f-a1e7-2d8e015720e8">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="193"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="796"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<parameter name="matricula_id" class="java.lang.String"/>
+	<parameter name="estado" class="java.lang.String"/>
+	<parameter name="numero_legajo" class="java.lang.String"/>
+	<parameter name="nomenclatura" class="java.lang.String"/>
+	<parameter name="nombre_comitente" class="java.lang.String"/>
+	<parameter name="apellido_comitente" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select numero_legajo as numero, to_char(fecha_solicitud, 'DD/MM/YYYY') as fecha, est.valor as estado,
+coalesce (d.direccion, '') || ' Nomenclatura ' || l.nomenclatura ||  coalesce( '-' || loc.nombre  || '-' , '')|| coalesce(dpto.nombre || '-' , '')  || coalesce(p.nombre, '') as ubicacion,
+tc.descripcion || ' ' || ts.descripcion  as tarea,
+case when (l.tipo = 3) then 'Legajo Tec'
+else (case when (l.tipo = 2) then 'Orden de Trabajo' else 'Permiso de Const' end) end as tipo
+from legajo l
+inner join t_estadolegajo est on (est.id=l.estado)
+left join domicilio d on (l.domicilio=d.id)
+left join localidad loc on (loc.id=d.localidad)
+left join departamento dpto on (dpto.id = loc.departamento)
+left join provincia p on (p.id= dpto.provincia)
+inner join tarea_subcategoria ts on (ts.id = l.subcategoria)
+inner join tarea_categoria tc on (tc.id=ts.categoria)
+left join legajo_comitente lc on (lc.legajo=l.id)
+left join persona com on (lc.persona= com.id)
+inner join matricula m on (m.id=l.matricula)
+where l.matricula=cast( $P{matricula_id} as INTEGER)  AND 
+((cast( $P{estado} as INTEGER)  = 0) OR l.estado= cast( $P{estado} as INTEGER) )AND
+ (cast($P{numero_legajo}as INTEGER)=0  OR l.numero_legajo=cast($P{numero_legajo}as INTEGER) AND
+(l.nomenclatura='' OR l.nomenclatura=  $P{nomenclatura}) AND
+ ($P{nombre_comitente}= '' OR  com.nombre= $P{nombre_comitente} )  AND ($P{apellido_comitente}= '' OR  com.nombre= $P{apellido_comitente} ) )
+ group by numero_legajo, fecha_solicitud, est.valor, d.direccion, l.nomenclatura, loc.nombre, dpto.nombre, p.nombre, tc.descripcion, ts.descripcion, l. tipo
+Order by fecha_solicitud]]>
+	</queryString>
+	<field name="numero" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="numero"/>
+	</field>
+	<field name="fecha" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fecha"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+	</field>
+	<field name="ubicacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ubicacion"/>
+	</field>
+	<field name="tarea" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tarea"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="109">
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle">
+				<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="0" y="1" width="497" height="60" uuid="522e1e1b-1b48-4451-ae89-0bf0df1a3529"/>
+				<imageExpression><![CDATA["resources/encabezado.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="82" width="298" height="16" uuid="410d4b4b-9c43-419a-8163-7344a9b0c062"/>
+				<textElement>
+					<font fontName="klavica" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["HISTÓRICO DE LEGAJOS TÉCNICOS "]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="174" y="0" width="190" height="50" uuid="7faa6c43-b80e-4686-a88a-8d08c3191763">
+					<printWhenExpression><![CDATA[$F{ubicacion}.equals("null")?Boolean.FALSE:Boolean.TRUE]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="1" width="126" height="49" uuid="df206407-92de-407b-962d-e0dd205b033d"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Estandar-Regular" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tarea}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="120" y="1" width="54" height="15" uuid="b7cbc192-0dc9-47e5-97c5-365f224c51c1"/>
+				<textElement>
+					<font fontName="Estandar-Regular"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="1" width="58" height="15" uuid="04fcc961-8f98-4281-8e03-2e8f50f55a79"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="60" height="16" uuid="1c6876e5-98ef-45ae-afa4-5fec56a50210"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
