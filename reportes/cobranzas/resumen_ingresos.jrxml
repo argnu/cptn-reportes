@@ -32,7 +32,7 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="Crosstab_CT" mode="Opaque" backcolor="#BEC9D4">
+	<style name="Crosstab_CT" mode="Opaque" backcolor="#F0F5FA">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
 			<topPen lineWidth="0.5" lineColor="#000000"/>
@@ -53,18 +53,19 @@
 	<parameter name="fecha_inicio" class="java.lang.String"/>
 	<parameter name="fecha_fin" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[select t.abreviatura,t.descripcion as concepto,SUM(c.importe_total) as importe_total, d.nombre as delegacion
+		<![CDATA[select 
+case when (t.abreviatura is null) then 'Intereses'
+else
+t.abreviatura || '-' || t.descripcion 
+end as abreviatura, t.descripcion as concepto,SUM(ci.importe) as importe_total,d.id, d.nombre as delegacion
 from comprobante c
 inner join comprobante_item ci on (c.id = ci.comprobante )
-inner join boleta b on (ci.boleta=b.id)
-inner join t_comprobante t on (b.tipo_comprobante=t.id)
-inner join boleta_item bi on (bi.boleta = b.id)
-inner join matricula m on (m.id=c.matricula)
-left join profesional p on (p.id=m.entidad)
-left join empresa e on (e.id= m.entidad) 
+left join boleta b on (ci.boleta=b.id)
+left join t_comprobante t on (b.tipo_comprobante=t.id)
 left join delegacion d on (d.id=c.delegacion)
-where (c.fecha>=  to_date($P{fecha_inicio}, 'YYYY-MM-DD') and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD'))
-group by t.abreviatura,t.descripcion, d.nombre]]>
+where (c.anulado is null or c.anulado<>1) and (c.fecha>=to_date($P{fecha_inicio}, 'YYYY-MM-DD')  and c.fecha<= to_date($P{fecha_fin}, 'YYYY-MM-DD'))
+group by t.abreviatura,t.descripcion, d.id, d.nombre
+order by d.id, t.abreviatura]]>
 	</queryString>
 	<field name="abreviatura" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="abreviatura"/>
@@ -73,11 +74,15 @@ group by t.abreviatura,t.descripcion, d.nombre]]>
 		<property name="com.jaspersoft.studio.field.label" value="concepto"/>
 	</field>
 	<field name="importe_total" class="java.lang.Double">
-		<property name="com.jaspersoft.studio.field.label" value="sum"/>
+		<property name="com.jaspersoft.studio.field.label" value="importe_total"/>
+	</field>
+	<field name="id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
 	</field>
 	<field name="delegacion" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="delegacion"/>
 	</field>
+	<sortField name="abreviatura" order="Descending"/>
 	<variable name="total" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{importe_total}]]></variableExpression>
 	</variable>
@@ -104,23 +109,23 @@ group by t.abreviatura,t.descripcion, d.nombre]]>
 		</band>
 	</columnHeader>
 	<summary>
-		<band height="293">
+		<band height="370">
 			<crosstab>
-				<reportElement x="0" y="11" width="600" height="181" uuid="40735a2e-4786-40fb-8bd3-6df9d8209647">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				<reportElement x="1" y="15" width="699" height="225" uuid="8e012c7b-f300-4a0a-81bd-5dbf400dc745">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.crosstab.style.header" value="Crosstab_CH"/>
 					<property name="com.jaspersoft.studio.crosstab.style.group" value="Crosstab_CG"/>
 					<property name="com.jaspersoft.studio.crosstab.style.total" value="Crosstab_CT"/>
 					<property name="com.jaspersoft.studio.crosstab.style.detail" value="Crosstab_CD"/>
 				</reportElement>
-				<rowGroup name="abreviatura" width="20" totalPosition="End">
+				<rowGroup name="abreviatura" width="150" totalPosition="End">
 					<bucket class="java.lang.String">
 						<bucketExpression><![CDATA[$F{abreviatura}]]></bucketExpression>
 					</bucket>
 					<crosstabRowHeader>
 						<cellContents mode="Opaque" style="Crosstab_CH">
 							<textField>
-								<reportElement x="0" y="0" width="20" height="60" uuid="7634eeaf-bfbf-4a5e-ad52-80e8214c6ed7"/>
+								<reportElement x="0" y="0" width="150" height="30" uuid="4b056c73-c989-416f-81ea-185c3d3350a5"/>
 								<textElement>
 									<font fontName="Estandar-Regular"/>
 								</textElement>
@@ -131,43 +136,24 @@ group by t.abreviatura,t.descripcion, d.nombre]]>
 					<crosstabTotalRowHeader>
 						<cellContents mode="Opaque" style="Crosstab_CT">
 							<staticText>
-								<reportElement x="0" y="0" width="160" height="20" uuid="094e5817-1198-418b-9e04-220a033ebc51"/>
+								<reportElement x="0" y="0" width="150" height="20" uuid="31239b91-9d4a-424d-aa94-d203784ccbe2"/>
 								<textElement>
 									<font fontName="Estandar-Regular"/>
 								</textElement>
-								<text><![CDATA[Total Delegación]]></text>
+								<text><![CDATA[Totales]]></text>
 							</staticText>
 						</cellContents>
 					</crosstabTotalRowHeader>
 				</rowGroup>
-				<rowGroup name="concepto" width="140" totalPosition="End">
-					<bucket class="java.lang.String">
-						<bucketExpression><![CDATA[$F{concepto}]]></bucketExpression>
-					</bucket>
-					<crosstabRowHeader>
-						<cellContents mode="Opaque" style="Crosstab_CH">
-							<textField>
-								<reportElement x="0" y="0" width="140" height="30" uuid="755ee771-e2ae-42f9-bb43-73bd788c9853"/>
-								<textElement>
-									<font fontName="Estandar-Regular"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$V{concepto}]]></textFieldExpression>
-							</textField>
-						</cellContents>
-					</crosstabRowHeader>
-					<crosstabTotalRowHeader>
-						<cellContents mode="Opaque" style="Crosstab_CG"/>
-					</crosstabTotalRowHeader>
-				</rowGroup>
-				<columnGroup name="delegacion" height="30" totalPosition="End">
-					<bucket class="java.lang.String">
+				<columnGroup name="delegacion" height="40" totalPosition="End">
+					<bucket order="None" class="java.lang.String">
 						<bucketExpression><![CDATA[$F{delegacion}]]></bucketExpression>
 					</bucket>
 					<crosstabColumnHeader>
 						<cellContents mode="Opaque" style="Crosstab_CH">
-							<textField>
-								<reportElement x="0" y="0" width="60" height="30" uuid="5e995b5a-a838-4fe8-b97f-a4b96a9e6a07"/>
-								<textElement>
+							<textField pattern="###0.00;-###0.00">
+								<reportElement x="0" y="0" width="80" height="40" uuid="e650d376-afb6-4c75-8f2b-1e19b8de6b40"/>
+								<textElement textAlignment="Center">
 									<font fontName="Estandar-Regular"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{delegacion}]]></textFieldExpression>
@@ -175,16 +161,24 @@ group by t.abreviatura,t.descripcion, d.nombre]]>
 						</cellContents>
 					</crosstabColumnHeader>
 					<crosstabTotalColumnHeader>
-						<cellContents mode="Opaque" style="Crosstab_CT"/>
+						<cellContents mode="Opaque" style="Crosstab_CT">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="40" forecolor="#171616" uuid="6a0f6d38-6c81-4ad4-bb4a-288bf1cedb58"/>
+								<textElement>
+									<font fontName="Estandar-Regular"/>
+								</textElement>
+								<text><![CDATA[Totales]]></text>
+							</staticText>
+						</cellContents>
 					</crosstabTotalColumnHeader>
 				</columnGroup>
 				<measure name="importe_total_MEASURE" class="java.lang.Double" calculation="Sum">
 					<measureExpression><![CDATA[$F{importe_total}]]></measureExpression>
 				</measure>
-				<crosstabCell width="60" height="30">
+				<crosstabCell width="80" height="30">
 					<cellContents mode="Opaque" style="Crosstab_CD">
 						<textField pattern="###0.00;-###0.00">
-							<reportElement x="0" y="0" width="60" height="30" uuid="9f58b9f3-609e-4911-b0e6-3f2d13450ba5"/>
+							<reportElement x="0" y="0" width="80" height="30" uuid="d2e0c050-494d-479f-87ce-36615a04406b"/>
 							<textElement textAlignment="Right">
 								<font fontName="Estandar-Regular"/>
 							</textElement>
@@ -192,13 +186,10 @@ group by t.abreviatura,t.descripcion, d.nombre]]>
 						</textField>
 					</cellContents>
 				</crosstabCell>
-				<crosstabCell width="70" height="30" columnTotalGroup="delegacion">
-					<cellContents mode="Opaque" style="Crosstab_CT"/>
-				</crosstabCell>
-				<crosstabCell width="60" height="20" rowTotalGroup="abreviatura">
+				<crosstabCell width="60" height="30" columnTotalGroup="delegacion">
 					<cellContents mode="Opaque" style="Crosstab_CT">
 						<textField pattern="###0.00;-###0.00">
-							<reportElement x="0" y="0" width="60" height="20" uuid="8ae9c878-f1dd-4a3f-8b3f-41d943d9d2c9"/>
+							<reportElement x="0" y="0" width="60" height="30" uuid="c588dece-3c62-4eff-b254-8d9303d6c753"/>
 							<textElement textAlignment="Right">
 								<font fontName="Estandar-Regular"/>
 							</textElement>
@@ -206,14 +197,27 @@ group by t.abreviatura,t.descripcion, d.nombre]]>
 						</textField>
 					</cellContents>
 				</crosstabCell>
-				<crosstabCell width="70" height="20" rowTotalGroup="abreviatura" columnTotalGroup="delegacion">
-					<cellContents mode="Opaque" style="Crosstab_CT"/>
+				<crosstabCell width="80" height="20" rowTotalGroup="abreviatura">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField pattern="###0.00;-###0.00">
+							<reportElement x="0" y="0" width="80" height="20" uuid="0a65781d-abfc-4f07-97a7-2387bc450d55"/>
+							<textElement textAlignment="Right">
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{importe_total_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
 				</crosstabCell>
-				<crosstabCell width="60" height="30" rowTotalGroup="concepto">
-					<cellContents mode="Opaque" style="Crosstab_CG"/>
-				</crosstabCell>
-				<crosstabCell width="70" height="30" rowTotalGroup="concepto" columnTotalGroup="delegacion">
-					<cellContents mode="Opaque" style="Crosstab_CT"/>
+				<crosstabCell width="60" height="20" rowTotalGroup="abreviatura" columnTotalGroup="delegacion">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField pattern="###0.00;-###0.00">
+							<reportElement x="0" y="0" width="60" height="20" uuid="290e90af-3b86-4573-92f6-6154048bdf28"/>
+							<textElement textAlignment="Right">
+								<font fontName="Estandar-Regular"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{importe_total_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
 				</crosstabCell>
 			</crosstab>
 		</band>

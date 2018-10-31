@@ -102,6 +102,16 @@
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/certificado_suspension_matricula.jrxml</location>
 		</link>
 		<link>
+			<name>certificado_suspension_matricula_1.jasper</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/certificado_suspension_matricula.jasper</location>
+		</link>
+		<link>
+			<name>certificado_suspension_matricula_1.jrxml</name>
+			<type>1</type>
+			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/certificado_suspension_matricula.jrxml</location>
+		</link>
+		<link>
 			<name>legajos_tecnicos.jasper</name>
 			<type>1</type>
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/legajos_tecnicos.jasper</location>
@@ -122,11 +132,6 @@
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/listado_legajos_tecnicos.jrxml</location>
 		</link>
 		<link>
-			<name>recibo.jasper</name>
-			<type>1</type>
-			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/recibo.jasper</location>
-		</link>
-		<link>
 			<name>resumen_ingresos.jasper</name>
 			<type>1</type>
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/cobranzas/resumen_ingresos.jasper</location>
@@ -135,16 +140,6 @@
 			<name>resumen_ingresos.jrxml</name>
 			<type>1</type>
 			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/reportes/cobranzas/resumen_ingresos.jrxml</location>
-		</link>
-		<link>
-			<name>solicitud_suspension_voluntad.jasper</name>
-			<type>1</type>
-			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/solicitud_suspension_voluntad.jasper</location>
-		</link>
-		<link>
-			<name>solicitud_suspension_voluntad_1.jasper</name>
-			<type>1</type>
-			<location>/home/nhuenchuman/argnu/proyectos/cptn/cptn-reportes/MyReports/solicitud_suspension_voluntad.jasper</location>
 		</link>
 	</linkedResources>
 </projectDescription>
